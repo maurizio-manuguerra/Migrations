@@ -1,0 +1,521 @@
+# AU data set
+
+
+```{r eval=T, include=T, echo=F, comment=NA}
+library(readstata13)
+setwd("~/Dropbox/Attachments/-.Migrations/")
+x=read.dta13("IZA_WB_2014.dta")
+
+x_bkup=x
+#cat_var = c()
+#x[,cat_var] = as.factor(x[,cat_var])
+
+no_sign_digits = 1 #in occupation 4 digits code
+x$cur_occ = as.factor(substr(as.character(x$cur_occ),1,no_sign_digits))
+x$hfqu = as.factor(x$hfqu)
+#attr(x,"label.table")
+```
+
+Covariates:
+* sex (1: Male; 2: Female)
+* age
+* visacat
+* marstat
+* $c_hfqu0
+	1: Australia & New Zealand                  
+	2: UK, Ireland, US & Canada                                    
+	3: EU/EEA 
+	4: South, East and South East Asia & Oceania                                     
+	5: Other 
+* $intst2
+	1: New South Wales & ACT                     
+	2: Victoria                   
+	3: Queensland   
+	4: South Australia & Tasmania 
+	5: Northern & Western Australia                     
+	6: Tasmania           
+	7: Northern Territory                       
+	8: A.C.T. 
+* $hfqu
+	1: Higher degree               
+	2: Post graduate diploma       
+	3: Bachelor degree or equivalent 
+	4: Tech/prof qual  diploma/certificate                               
+	5: Trade       
+	6: 12 or more years of schooling 
+	7: 10-11 years of schooling              
+	8: 7-9 years of schooling       
+	9: 6 or fewer years of schooling 
+	88: Other 
+* $hfqu3
+	1: Higher degree               
+	2: Post graduate diploma       
+	3: Bachelor degree or equivalent 
+	4: Tech/prof qual  diploma/certificate                               
+	5: Trade       
+	8: Not stated/Refused 
+	9: None of these 
+* $qu_cur
+	1: Higher degree               
+	2: Post graduate diploma       
+	3: Bachelor degree or equivalent 
+	4: Tech/prof qual  diploma/certificate                               
+	5: Trade       
+	6: Other certificate 
+	7: Other
+	8: Not stated/Refused 
+	9: Dont know
+* $occ_cr, $oc_hc: occupation, generic
+* $as_hfqu, $occfhc, $cur_occ, $as_qucur: occupation, very detailed --->> use $cur_occ
+* $cur_work: "do you currently work?"
+	0: Language Difficulties                   
+	1: Yes                    
+	2: No    
+	8: Not stated/Refused                    
+	9: dk 
+* $cit_stat
+	1: Australian Citizen            
+	2: Applied        
+	3: Not Applied 
+	8: Not stated/Refused                 
+	9 :dk 
+* $marstat
+	1: Married          
+	2: Separated           
+	3: Divorced            
+	4: Widowed      
+	5: Never Married 
+	8: Not stated/Refused                 
+	9: dk 
+
+Dependent variable:
+* wincwage
+	0: None, Nil     
+	1: $1 to 57 a week    
+	2: $58 to 96 a week   
+	3: $97 to 154 a week  
+	4: $155 to 230 a week  
+	5: $231 to 308 a week 
+	6: $309 to 385 a week 
+	7: $386 to 481 a week  
+	8: $482 to 577 a week  
+	9: $578 to 673 a week  
+	10: $674 to 769 a week  
+	11: $770 to 961 a week 
+	12: $962 or more a week  
+	98: Not stated/Refused                  
+	99: DK 
+$pcHHinc
+	0: None, Nill       
+	1: 1 to 8,000 AUD a year  
+	2: 8,001 to 16,000 AUD a year 
+	3: 16,001 to 25,000 AUD a year 
+	4: 25,001 to 35,000 AUD a year 
+	5: 35,001 to 50,000 AUD a year   
+	6: 50,001 AUD or more a year          
+	8: Not stated/Refused 
+$HHinc
+	0: None, Nill       
+	1: 1 to 8,000 AUD a year  
+	2: 8,001 to 16,000 AUD a year 
+	3: 16,001 to 25,000 AUD a year 
+	4: 25,001 to 35,000 AUD a year 
+	5: 35,001 to 50,000 AUD a year   
+	6: 50,001 AUD or more a year          
+	8: Not stated/Refused 
+	
+The model:
+Each individual of country j has a wage w_i given a few covariates (sex, age, etc.) and education level (`r edu=x$hfqu`) and job (`r occ=x$cur_occ`). edu and occ must be coupled in factors, but there is the problem of massive missing observations: 18449 have missing values for edu or occ (and 7808 for both of them).
+$cur_act is the occupation variable to use (putting together workers/unemployed and non-labour-force). $cur_occ is to be used in the workers category of cur_act.
+
+Keep:
+form_id
+intst
+visa_mj
+sex
+age
+marsstat
+noHHm
+nch_res
+nrelAU
+cobirth
+ac_12fhc
+imm_y
+visAU1
+hfqu: reported only once for each form_id,
+		[see:
+		```{r eval=T, include=T, echo=F, comment=NA}
+		ids = unique(x$form_id)
+		n_ids = length(ids)
+		notNA = NULL
+		for (i in 1:n_ids){
+			rows=which(x$form_id==ids[i])
+			notNA=c(notNA,sum(!is.na(x$hfqu[rows])))
+		}
+		```
+		]
+		but not always in the first interview. Right? <-- Ask Max
+		If yes, change in this way:
+		```{r eval=T, include=T, echo=F, comment=NA}
+		ids = unique(x$form_id)
+		n_ids = length(ids)
+		for (i in 1:n_ids){
+			rows_NA = which(x$form_id==ids[i] & is.na(x$hfqu))
+			rows_notNA = which(x$form_id==ids[i] & !is.na(x$hfqu))
+			x$hfqu[rows_NA]=x$hfqu[rows_notNA]
+		}
+		```
+cur_act: can change for same form_id. A pattern like 5, 7, NA means... And NA, 8, NA? <-- Ask Max
+cur_occ
+valfun1 or logvalfun
+car1 or car
+ileng
+qual_as
+occ_hc
+wincwage
+oved_cr
+hours
+al06
+WAVE: 5 waves (1-3: cohort 1; 4-5: cohort 2) [see table(x$WAVE,x$cohort)]
+COHORT
+stayjob
+t1d
+ab22
+
+Possibly useful commands:
+
+> aa=attr(x,"label.table")
+> ii=which(names(aa)=='wincwage')
+> aa[ii]
+> xinds=which(x$cur_occ>=1301 & x$cur_occ<=1399)
+> attr(x[xinds,],"label.table")
+> xsub=x[x$WAVE==1 | x$WAVE==4,]
+> qu=xsub$hfqu
+> occ=xsub$cur_occ
+> length(which(is.na(qu) & is.na(occ)))
+
+```{r eval=T, include=T, echo=F, comment=NA}
+model1=(wincwage ~ WAVE + COHORT + sex + age + hfqu*cur_occ + (1|form_id))
+fit1 = lm(model, data=x)
+summary(fit)
+
+library(mgcv)
+fit2 = gam(wincwage ~ WAVE + COHORT + sex + age + hfqu*cur_occ, data=x)
+fit2s = gam(wincwage ~ COHORT + sex + age + hfqu*cur_occ + s(WAVE, k=3), data=x)
+
+fit2r = gamm(wincwage ~ WAVE + COHORT + sex + age + hfqu*cur_occ, random=list(form_id=~1), data=x)
+```
+
+
+# IZA2
+
+```{r eval=T, include=T, echo=F, comment=NA}
+library(readstata13)
+setwd("~/Dropbox/dropbox mq/Maurizio/")
+x=read.dta13("MAURIZIO_IZA_WB_2014.dta")
+no_sign_digits = 1 #in occupation 4 digits code
+x$cur_occ = as.factor(substr(as.character(x$cur_occ),1,no_sign_digits))
+x$hfqu = as.factor(x$hfqu)
+```
+
+
+
+# HILDA
+
+Le variabili di Interesse sono edhigh1 (education) e jbmo62 (occupation). Come vedi ci sono relativamente pochi immigrati. Ti ho inviato un'extraction del pannello (xwaveid e wave). Ci sono 12 osservazioni al massimo ma come vedrai non per tutti.
+I salari sono wscei (current weekly wage) e wsfei (Financial year wage) 
+
+Questions:
+- plot(x$wscei,x$wsfei) doesn't give results that lay on a stright line, i.e. cor(x$wscei,x$wsfei) = 0.8259391, not 1.
+- how to maximise info on wage in model.
+
+Covariates:
+ancob: Country of birth
+yrivwfst: year first interview
+yrivwlst: year last interview
+hh*: household...
+edcqtyp: Currently studying full or part time
+esdtl: Labour force status - detail
+esempst: Current employment status
+jb*: job... (jbmo62)
+helth: Long term health condition
+fmfsch: How much schooling father completed
+fmmsch: How much schooling mother completed
+anlote: Speak language other than English
+aneab: How well speaks English
+anyoa: Year first came to Australia to live (no anyoan)
+anpappn: Australian visa - Primary applicant
+anengfn: Is English the first language you learned to speak as a child
+edcoqn: Country completed highest education
+rtcompn: Retired completely from the workforce
+rtyrn: Year retired
+jbmoccs: occupational status scale, current main job
+tcr: Number of own resident children
+tcnr: Number of own non-resident children
+hhyng: Age of youngest person in household
+hhold: Age of oldest person in household
+anmigc: Migration category when you or your family first arrived in Australia: **mostly missings**
+fmnsib: How many siblings
+edqenr: Ever enrolled in a course of study to obtain a qualification
+edcoq: Country completed highest qualification
+hgage: Age last birthday at June 30 2012
+
+
+
+```{r eval=T, include=T, echo=F, comment=NA}
+#library(readstata13)
+setwd("~/Dropbox/dropbox mq/Maurizio/")
+load("Hilda.RData")
+#x=read.dta13("MAURIZIO_HILDA_extraction.dta")
+x = x[x$yrivwfst!=-2,]
+x$age_at_interview = x$hgage - (2012-x$yrivwfst)
+
+x$anmigc = as.factor(x$anmigc)
+
+# ancob [country of birth] --> 3 categories: AU, anglo, others
+missings.ancob=which(as.numeric(x$ancob) <=10)
+x = x[-missings.ancob,]
+au = c("[1101] Australia")
+anglo = c("[2100] United Kingdom", "[2201] Ireland", "[9225] South Africa", "[8102] Canada", "[8104] United States of America")
+i.au = which(x$ancob %in% au)
+i.anglo = which(x$ancob %in% anglo)
+ancob3 = rep("others", nrow(x)) 
+ancob3[i.au] = "australians"
+ancob3[i.anglo] = "anglo"
+x$ancob3 = factor(ancob3)
+
+x$edcoq[is.na(x$edcoq)] = 1 #<----- check
+x$edqenr[is.na(x$edqenr)] = 1 #<----- check
+x$aneab[i.au] = 1
+
+# anyoa [year of arriva] --> wave-age for non-migrants
+x$anyoa[i.au] = 2012 - x$hgage[i.au]
+x=x[x$anyoa>1900,]
+#WARNNING: i.au no more valid from here on
+##Factors##
+facto <- c("xwaveid","jbmspay","jbmssec","edcoq")
+for (f in facto) x[,f]=as.factor(x[,f])
+#x <- sapply(facto,function(f)x[,f]=as.factor(x[,f]))
+
+##wages_perc
+individual_quantiles <- function(x){
+	n <- length(x)
+	return(rank(x)/n)
+}
+
+perc_by_job =by(x, x$jbmo62, function(x)quantile(x$wsfei, prob=c(0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1)))
+jobs=levels(x$jbmo62)
+jobs=jobs[substr(jobs,1,2)!="[-"]
+x$wages_perc = rep(NA, nrow(x))
+for (j in jobs){
+	ii <- which(x$jbmo62 == j)
+	wages <- x[ii,"wsfei"]
+	wages_perc <- individual_quantiles(wages)
+	x[ii,"wages_perc"] <- wages_perc
+}
+x=x[!is.na(x$wages_perc),]
+
+##Plot jobs wage lines
+plot(0,0,xlim=c(log(30000),log(1E5)),ylim=c(0,1))
+for (j in jobs){
+	ii <- which(x$jbmo62 == j)
+	wages <- sort(x[ii,"wsfei"])
+	wages=wages[wages>0]
+	wages_perc <- individual_quantiles(wages)
+	lines(log(wages),wages_perc)
+}
+# Try plotting with colours based on the job code
+
+
+x_bkup=x
+	#cat_var = c()
+	#x[,cat_var] = as.factor(x[,cat_var])
+	
+#	no_sign_digits = 1 #in occupation 4 digits code
+#	x$cur_occ = as.factor(substr(as.character(x$cur_occ),1,no_sign_digits))
+#	x$hfqu = as.factor(x$hfqu)
+	#attr(x,"label.table")
+```
+
+## Analyses
+
+```{r eval=T, include=T, echo=F, comment=NA}
+model12=(wsfei ~ wave +  sex + age_at_interview + edhigh1 + jbmo62  + ancob + anengfn)
+#model12=(wsfei ~ wave +  sex + hgage + edhigh1*jbmo62 + (1|as.factor(xwaveid)))
+fit11 = lm(model11, data=x)
+fit12 = lm(model12, data=x)
+#############
+library(mgcv)
+##
+model20=(wsfei ~ wave +  sex + s(age_at_interview) + edhigh1 + jbmo62)
+fit20 = gam(model20, data=x)
+summary(fit20)
+plot(fit20,pages=1,seWithMean=TRUE)
+##
+model21=(wsfei ~ s(wave) +  sex + s(age_at_interview) + edhigh1 + jbmo62)
+fit21 = gam(model21, data=x)
+plot(fit21,pages=1,seWithMean=TRUE)
+#
+model22=(wsfei ~ s(wave) +  sex + s(age_at_interview) + edhigh1 * jbmo62)
+fit22 = gam(model22, data=x)
+plot(fit22,pages=1,seWithMean=TRUE)
+#
+model23=(wsfei ~ wave +  sex + age_at_interview + edhigh1 + jbmo62 + (1|as.factor(xwaveid)))
+no.waves <- by(x,x$xwaveid,nrow)
+good.subjects <- names(no.waves)[no.waves>=12] #5:15420 (163618/186283 records) subjects #4: 16402
+xx <- x[x$xwaveid %in% good.subjects, ]
+fit23 = gam(model23, data=xx)
+#Not enough (non-NA) data to do anything
+#
+model24=(wsfei ~ s(wave) +  sex + s(age_at_interview) + edhigh1 * jbmo62 + anyoa)
+#xx = xx[xx$edqenr>0,]
+fit24 = gam(model24, data=x)
+#A term has fewer unique covariate combinations than specified maximum degrees of freedom
+```
+
+## Summary of Max email:
+
+1. wage = costant + demographics + experience(age-anni scuola) + caract.employer(if available) + location + e
+2. participation (0=no,1=yes) = costant + demographics + education + young children + wealth + e
+
+### Variables
+
+* wscei: weekly wage ---> replaced with wsfei (annual wage)
+~
+* ancob  [immigrato o no] --> replaced with ancob3: 3 categories: au, anglo, others
+* edcoq  [education in au]
+* edqenr [qualifica in au]
+* fmfo61 and/or fmmo61 [figlio di operai]
+...controlli...
+* aneab [conoscenze inglese: missings born in au replaced with 1:very well]
+* anyoa [year of arrival]. For non-migrants, replace with 2012-age_2012
+* edagels o edhigh1 [years of education] ---> used edhigh1
+* esdtl [participation to labour market]
+* hgage [age]
+* hgsex [sex]
+* marital status [mrcurr]
+* hhmsr o hhstate [location]
+* jbmo62 [occupation]
+* jbmwpsz [no employees]
+* jbocct [tenure current job]
+
+```{r eval=T, include=T, echo=F, comment=NA}
+model25=(wsfei ~ s(wave) +  hgage + sex + s(anyoa) + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit25 = gam(model25, data=x)
+anova(fit25)
+plot(fit25,pages=1)
+
+model26=(wsfei ~ s(wave) +  s(hgage) + sex + s(anyoa) + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit26 = gam(model26, data=x)
+anova(fit26)
+plot(fit26,pages=1)
+
+model27=(wsfei ~ s(wave) +  s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27 = gam(model27, data=x)
+anova(fit27)
+plot(fit27,pages=1)
+
+model28=(wages_perc ~ s(wave) +  s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit28 = gam(model28, data=x)
+anova(fit28)
+plot(fit28,pages=1)
+
+
+fit29 = gamm(model28, random=list(xwaveid=~1), data=x)
+anova(fit28)
+plot(fit28,pages=1)
+
+#Males vs females
+xm=x[x$sex=="[1] Male",]
+xf=x[x$sex=="[2] Female",]
+model26m=(wsfei ~ s(wave) +  s(hgage) + s(anyoa) + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit26m = gam(model26m, data=xm)
+anova(fit26m)
+plot(fit26m,pages=1)
+model26f=(wsfei ~ s(wave) +  s(hgage) + s(anyoa) + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit26f = gam(model26f, data=xf)
+anova(fit26f)
+plot(fit26f,pages=1)
+```
+
+## Job satisfaction
+
+Guardando alla tua domanda di OSP e cose che potrebbero essere divertenti, la variabile  latente per eccellenza e' la Job satisfaction. Tra quella per i soldi e per sicurezza (jbmssec) mi sembra ci sia piu' variabilita' per Job satisfaction about pay (jbmspay) e potremmo vedere:
+ 
+1. dall'inizio HILDA, quali sono i lavori dove chi lavora e' piu' felice? [jbmo62]
+2. ci sono settori che sono sistematicamente over-paid (qui dovresti vedere in primis mining e finanza. Anche il settore pubblico non e' male)
+3. sono piu' felici uomi e donne? [sex]
+4. immigrati o nativi? [ancob3]
+5. giovani o vecchi? (possibile scala: 25-29; 30-39; 40-49; 50-59; 60+) [s(hgage)]
+6. laureati o no? [edcoq --> ...]
+7. lavoratori fedeli al'employer o switchers? (tenure: jbocct) 
+8. in che stato? (hhstate)
+9. e in che tipo di famiglia? (hhtype)
+ 
+detto questo, mi sembra che il funzionale che tu stai usando e' legato al tempo: puo' essere usato anche su intensita', tipo prestigio (jbmoccs): il prestigio ha molte categorie ma e' stato surveyed solo in wave 5. Il che vuol dire mappare le occupation/Prestige scale da wave 5 e 'spararla' alle occupations di tutte le rimanenti waves.
+
+```{r eval=T, include=T, echo=F, comment=NA}
+library(ordinal)
+library(mgcv)
+
+xsub=x[,c("xwaveid","hgsex","jbmspay","jbmssec","jbmo62","ancob3","hgage","edcoq","jbocct","hhstate","hhtype","wsfei","wages_perc")]
+xsub <- xsub[substr(as.character(xsub$jbmspay),1,1)!="-" & substr(as.character(xsub$jbmssec),1,1)!="-",]
+xsub <- xsub[substr(xsub$hhstate,1,2)!="[-",]
+xsub=droplevels(xsub)
+
+fit <- clm(jbmspay ~ hgsex + hgage + ancob3+ hhtype+ jbocct + wages_perc, data=xsub)
+
+
+fit <- clm(jbmspay ~ hgsex + jbmo62 + ancob3 + hgage + edcoq + jbocct + hhstate + hhtype + wages_perc, data=xsub)
+
+fitm <- clmm(jbmspay ~ hgsex + jbmo62 + ancob3 + hgage + edcoq + jbocct + hhstate + hhtype + wages_perc + (1|xwaveid), data=xsub)
+```
+
+Wornking on the satisfaction for job security:
+```{r eval=T, include=T, echo=F, comment=NA}
+#Works
+fit <- clm(jbmssec ~ hgsex + hgage + ancob3+ hhtype+ jbocct + wages_perc, data=xsub)
+fit <- clm(jbmssec ~ hgsex + hgage + ancob3+ hhtype+ jbocct + wages_perc + hhstate, data=xsub)
+#Model is nearly unidentifiable
+fit <- clm(jbmssec ~ hgsex + hgage + ancob3+ hhtype+ jbocct+ edcoq + hhstate, data=xsub)
+```
+
+We can study the wage distribution in each job category and then create variable wage_perc that gives the percentile the subject wage is in.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
