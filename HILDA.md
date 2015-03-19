@@ -491,6 +491,43 @@ The last fit (fit29) shows that the effect on the wave can be assumed linear and
 
 This result can be interpreted considering that the dependent variable is the salary percentile of the subject specific to his job. The occupation of the parents and the status of migrant could contribute to choice of the job, but not to the salary in it (hypothesis to test).
 
+Now we elaborate on model28, removing wage from the model and using two temporal variables: the age of subject (a variable changing each year: yrivwfst-(2012-yrivwfst)-1+wave) and its date of birth (here we can use hgage, or dob=2012-hgage).
+
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+wages_perc ~ s(dob) + s(age) + sex + ancob3 + edhigh1 + jbmo62 + 
+    edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + 
+    jbmwpsz + jbocct + aneab
+
+Parametric Terms:
+        df       F p-value
+sex      1 1781.70 < 2e-16
+ancob3   2   10.36 3.2e-05
+edhigh1  7  163.13 < 2e-16
+jbmo62  49  286.89 < 2e-16
+edcoq   69    4.02 < 2e-16
+edqenr   1    8.68 0.00321
+fmfo61  12    2.99 0.00034
+fmmo61  11    2.81 0.00114
+esdtl    2 5914.58 < 2e-16
+mrcurr   7   32.14 < 2e-16
+hhstate  8   34.81 < 2e-16
+jbmwpsz 12  987.47 < 2e-16
+jbocct   1  894.80 < 2e-16
+aneab    1   11.40 0.00074
+
+Approximate significance of smooth terms:
+        edf Ref.df   F p-value
+s(dob) 8.12   8.61 520  <2e-16
+s(age) 7.20   7.88 184  <2e-16
+```
+
+![plot of chunk consider_age](HILDA_files/figure-html/consider_age.png) 
 ## Job satisfaction
 
 Guardando alla tua domanda di OSP e cose che potrebbero essere divertenti, la variabile  latente per eccellenza e' la Job satisfaction. Tra quella per i soldi e per sicurezza (jbmssec) mi sembra ci sia piu' variabilita' per Job satisfaction about pay (jbmspay) e potremmo vedere:

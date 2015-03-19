@@ -267,6 +267,17 @@ The last fit (fit29) shows that the effect on the wave can be assumed linear and
 
 This result can be interpreted considering that the dependent variable is the salary percentile of the subject specific to his job. The occupation of the parents and the status of migrant could contribute to choice of the job, but not to the salary in it (hypothesis to test).
 
+Now we elaborate on model28, removing wage from the model and using two temporal variables: the age of subject (a variable changing each year: yrivwfst-(2012-yrivwfst)-1+wave) and its date of birth (here we can use hgage, or dob=2012-hgage).
+
+```{r consider_age, eval=T, include=T, echo=F, comment=NA, cache=TRUE}
+x$dob <- 2012 - x$hgage
+x$age <- x$yrivwfst -x$dob - 1 + x$wave
+model30=(wages_perc ~ s(dob) + s(age) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit30 = gam(model30, data=x)
+anova(fit30)
+plot(fit30,pages=1)
+
+```
 ## Job satisfaction
 
 Guardando alla tua domanda di OSP e cose che potrebbero essere divertenti, la variabile  latente per eccellenza e' la Job satisfaction. Tra quella per i soldi e per sicurezza (jbmssec) mi sembra ci sia piu' variabilita' per Job satisfaction about pay (jbmspay) e potremmo vedere:
