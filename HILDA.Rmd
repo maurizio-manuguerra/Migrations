@@ -307,7 +307,7 @@ extractAIC(fitp)
 #fitm <- clmm(jbmspay ~ hgsex + jbmo62 + ancob3 + hgage + edcoq + jbocct + hhstate + hhtype + wages_perc + (1|xwaveid), data=xsub)
 ```
 
-The model fitted with the wager_perc variable (AIC=`r extractAIC(fitp)`) is a better choice than that with the annula salary wsfei (AIC=`r extractAIC(fit)`).
+The model fitted with the wager_perc variable is a better choice than that with the annula salary wsfei.
 
 
 ```{r satisfaction_job_pay_perc_interaction, eval=T, include=T, echo=F, comment=NA, cache=F}
@@ -317,7 +317,7 @@ summary(fitp2)
 extractAIC(fitp2)
 ```
 
-AIC improved: `r extractAIC(fitp2)`
+AIC improved.
 
 ```{r satisfaction_job_pay_perc_interaction_rnd, eval=T, include=T, echo=F, comment=NA, cache=F}
 library(ordinal)
