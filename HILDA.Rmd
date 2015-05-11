@@ -49,7 +49,7 @@ hgage: Age last birthday at June 30 2012
 * Load the data and make some home cleaning (details omitted).
 ```{r data_manipulation, eval=T, include=T, echo=F, comment=NA, cache=F}
 #library(readstata13)
-setwd("~/Dropbox/dropbox mq/Maurizio/")
+setwd("~/Dropbox/dropbox mq/")
 load("Hilda.RData")
 #x=read.dta13("MAURIZIO_HILDA_extraction.dta")
 x = x[x$yrivwfst!=-2,]
@@ -78,8 +78,11 @@ x$anyoa[i.au] = 2012 - x$hgage[i.au]
 x=x[x$anyoa>1900,]
 #WARNNING: i.au no more valid from here on
 ##Factors##
-facto <- c("xwaveid","jbmspay","jbmssec","edcoq")
-for (f in facto) x[,f]=as.factor(x[,f])
+facto <- c("xwaveid","edcoq")
+for (f in facto) x[,f]=factor(x[,f])
+##Ordered factors##
+facto <- c("jbmspay","jbmssec")
+for (f in facto) x[,f]=factor(x[,f], ordered=T)
 x$wsfei[x$wsfei==0] = 1
 x$dob <- 2012 - x$hgage
 x$age <- x$yrivwfst -x$dob - 1 + x$wave
@@ -321,10 +324,50 @@ AIC improved.
 
 ```{r satisfaction_job_pay_perc_interaction_rnd, eval=T, include=T, echo=F, comment=NA, cache=F}
 library(ordinal)
-fitp2rnd <- clm(jbmspay ~ hgsex + hgage +  hhtype+ ancob3 + jbocct:ancob3 + wages_perc:ancob3 + (1|xwaveid), data=xsub)
+fitp2rnd <- clmm(jbmspay ~ hgsex + hgage +  hhtype+ ancob3 + jbocct:ancob3 + wages_perc:ancob3 + (1|xwaveid), data=xsub)
 summary(fitp2rnd)
 extractAIC(fitp2rnd)
 ```
+
+##### Smoothing
+
+We now create three variables: the wage (or wage_perc) for Australians, English-speaking migrants and other migrants.
+We fit a generalized additive model with the effect of these three variable smoothed.
+
+```{r eval=T, include=T, echo=F, comment=NA}
+library(VGAM)
+#fitgam0 <- vgam(jbmssec ~ hgsex + hgage + ancob3+ hhtype+ jbocct + s(wages_perc), data=xsub, family=propodds)
+#plotvgam(fitgam0, rugplot=F)
+
+##wage
+xsub$w_au = xsub$w_anglo = xsub$w_others = 0
+xsub$w_au[xsub$ancob3=="australians"] = xsub$wsfei[xsub$ancob3=="australians"]
+xsub$w_anglo[xsub$ancob3=="anglo"] = xsub$wsfei[xsub$ancob3=="anglo"]
+xsub$w_others[xsub$ancob3=="others"] = xsub$wsfei[xsub$ancob3=="others"]
+fitgam_wage <- vgam(jbmssec ~ hgsex + hgage + hhtype+ jbocct + s(w_au) + s(w_anglo) + s(w_others), data=xsub, family=propodds)
+plotvgam(fitgam_wage, se=T, rugplot=F, xlab="wage percentiles", ylab="effect on satisfaction", which.term=c("s(w_au)"),control=plotvgam.control(ylim=c(-.2,.4), lcol="blue", scol="blue"))
+plotvgam(fitgam_wage, se=T, rugplot=F, which.term=c("s(w_anglo)"),control=plotvgam.control(add.arg=T, lcol="red", scol="red"))
+plotvgam(fitgam_wage, se=T, rugplot=F, which.term=c("s(w_others)"),control=plotvgam.control(add.arg=T, lcol="black", scol="black"))
+legend("bottomright",c("Australians", "English-speaking migrants", "Other migrants") , col=c("blue","red","black"), lty=c(1,1,1) )
+```
+
+The confidence intervals are too big, the wage is not the right variable to use.
+We can now use the percentiles of wage in each job code.
+
+```{r eval=T, include=T, echo=F, comment=NA}
+##wage_perc
+xsub$wp_au = xsub$wp_anglo = xsub$wp_others = 0
+xsub$wp_au[xsub$ancob3=="australians"] = xsub$wages_perc[xsub$ancob3=="australians"]
+xsub$wp_anglo[xsub$ancob3=="anglo"] = xsub$wages_perc[xsub$ancob3=="anglo"]
+xsub$wp_others[xsub$ancob3=="others"] = xsub$wages_perc[xsub$ancob3=="others"]
+fitgam <- vgam(jbmssec ~ hgsex + hgage + hhtype+ jbocct + s(wp_au) + s(wp_anglo) + s(wp_others), data=xsub, family=propodds)
+plotvgam(fitgam, rugplot=F, se=T, xlab="wage percentiles", ylab="effect on satisfaction", which.term=c("s(wp_au)"),control=plotvgam.control(ylim=c(-.3,.5), lcol="blue", scol="blue"))
+plotvgam(fitgam, rugplot=F, se=T, which.term=c("s(wp_anglo)"),control=plotvgam.control(add.arg=T, lcol="red", scol="red"))
+plotvgam(fitgam, rugplot=F, se=T, which.term=c("s(wp_others)"),control=plotvgam.control(add.arg=T, lcol="black", scol="black"))
+legend("bottomright",c("Australians", "English-speaking migrants", "Other migrants") , col=c("blue","red","black"), lty=c(1,1,1) )
+```
+
+The results are interesting: ...
 
 
 #### Satisfaction for job security:
