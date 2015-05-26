@@ -36,7 +36,7 @@ fmnsib: How many siblings
 edqenr: Ever enrolled in a course of study to obtain a qualification
 edcoq: Country completed highest qualification
 hgage: Age last birthday at June 30 2012
-
+ehtse: Time since FT (full-time) education - years
 ## Data
 
 * Load the data and make some home cleaning (details omitted).
@@ -44,307 +44,6 @@ hgage: Age last birthday at June 30 2012
 
 * Create the variable wages_perc: percentile of salary specific to each job [details omitted].
 
-
-* Plot wages_perc vs wages (each job-code [1 digit] is a different color):
-![plot of chunk plot_wages_perc](HILDA_files/figure-html/plot_wages_perc.png) 
-
-
-## Pre-analyses
-Initially we use the annual salary variable *wsfei*.
-In the next analyses, there are no random effects over the subjects.
-The first analysis is a simple linear model:
-
-
-```
-
-Call:
-lm(formula = model12, data = x)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--106268  -14397   -1346   11527  452755 
-
-Coefficients:
-                                                                    Estimate Std. Error t value Pr(>|t|)    
-(Intercept)                                                          61695.3    20268.3    3.04  0.00234 ** 
-wave                                                                  1190.0      142.2    8.37  < 2e-16 ***
-sex[2] Female                                                       -13872.3      387.7  -35.78  < 2e-16 ***
-age_at_interview                                                       220.2       13.8   15.98  < 2e-16 ***
-edhigh1[2] Grad diploma, grad certificate                            -6748.3     1063.3   -6.35  2.2e-10 ***
-edhigh1[3] Bachelor or honours                                      -10151.9      936.6  -10.84  < 2e-16 ***
-edhigh1[4] Adv diploma, diploma                                     -15315.9     1012.6  -15.13  < 2e-16 ***
-edhigh1[5] Cert III or IV                                           -17366.0      980.1  -17.72  < 2e-16 ***
-edhigh1[8] Year 12                                                  -20243.5      992.1  -20.40  < 2e-16 ***
-edhigh1[9] Year 11 and below                                        -22743.6      975.4  -23.32  < 2e-16 ***
-edhigh1[10] Undetermined                                            -39725.9    11765.1   -3.38  0.00073 ***
-jbmo62[11] Chief Executives, General Managers and Legislators        26069.4    20311.9    1.28  0.19934    
-jbmo62[12] Farmers and Farm Managers                                -40081.9    20246.5   -1.98  0.04775 *  
-jbmo62[13] Specialist Managers                                       12852.3    20234.4    0.64  0.52532    
-jbmo62[14] Hospitality, Retail and Service Managers                 -14595.3    20237.6   -0.72  0.47080    
-jbmo62[20] Professionals                                             20338.6    23354.8    0.87  0.38384    
-jbmo62[21] Arts and Media Professionals                             -21131.4    20289.6   -1.04  0.29766    
-jbmo62[22] Business, Human Resource and Marketing Professionals       1782.2    20237.0    0.09  0.92982    
-jbmo62[23] Design, Engineering, Science and Transport Professionals  -7523.0    20247.4   -0.37  0.71023    
-jbmo62[24] Education Professionals                                  -12189.5    20238.6   -0.60  0.54698    
-jbmo62[25] Health Professionals                                      -3383.8    20243.9   -0.17  0.86725    
-jbmo62[26] ICT Professionals                                          2803.6    20261.9    0.14  0.88995    
-jbmo62[27] Legal, Social and Welfare Professionals                  -15042.6    20261.2   -0.74  0.45783    
-jbmo62[30] Technicians and Trades Workers                             7161.8    28596.3    0.25  0.80225    
-jbmo62[31] Engineering, ICT and Science Technicians                  -7784.7    20256.3   -0.38  0.70075    
-jbmo62[32] Automotive and Engineering Trades Workers                -14810.2    20243.5   -0.73  0.46442    
-jbmo62[33] Construction Trades Workers                              -29968.7    20246.3   -1.48  0.13883    
-jbmo62[34] Electrotechnology and Telecommunications Trades Workers  -14619.9    20256.7   -0.72  0.47046    
-jbmo62[35] Food Trades Workers                                      -22206.2    20279.8   -1.09  0.27353    
-jbmo62[36] Skilled Animal and Horticultural Workers                 -30247.4    20275.1   -1.49  0.13575    
-jbmo62[39] Other Technicians and Trades Workers                     -21595.3    20256.2   -1.07  0.28638    
-jbmo62[41] Health and Welfare Support Workers                       -12912.0    20271.8   -0.64  0.52417    
-jbmo62[42] Carers and Aides                                         -22496.1    20241.7   -1.11  0.26642    
-jbmo62[43] Hospitality Workers                                      -25132.7    20253.7   -1.24  0.21465    
-jbmo62[44] Protective Service Workers                                -2817.2    20268.9   -0.14  0.88946    
-jbmo62[45] Sports and Personal Service Workers                      -25175.8    20279.8   -1.24  0.21446    
-jbmo62[51] Office Managers and Program Administrators                -2920.9    20256.8   -0.14  0.88535    
-jbmo62[52] Personal Assistants and Secretaries                       -9788.2    20265.4   -0.48  0.62910    
-jbmo62[53] General Clerical Workers                                 -14449.2    20250.9   -0.71  0.47554    
-jbmo62[54] Inquiry Clerks and Receptionists                         -15830.6    20251.5   -0.78  0.43440    
-jbmo62[55] Numerical Clerks                                         -13884.3    20242.5   -0.69  0.49278    
-jbmo62[56] Clerical and Office Support Workers                      -21104.0    20284.6   -1.04  0.29816    
-jbmo62[59] Other Clerical and Administrative Workers                -11270.3    20250.9   -0.56  0.57785    
-jbmo62[61] Sales Representatives and Agents                          -8119.0    20264.7   -0.40  0.68868    
-jbmo62[62] Sales Assistants and Salespersons                        -24761.8    20234.8   -1.22  0.22107    
-jbmo62[63] Sales Support Workers                                    -24101.7    20262.7   -1.19  0.23427    
-jbmo62[71] Machine and Stationary Plant Operators                    -4228.5    20257.6   -0.21  0.83465    
-jbmo62[72] Mobile Plant Operators                                   -15775.6    20277.7   -0.78  0.43659    
-jbmo62[73] Road and Rail Drivers                                    -17141.5    20248.2   -0.85  0.39724    
-jbmo62[74] Storepersons                                             -19658.9    20314.5   -0.97  0.33319    
-jbmo62[80] Labourers                                                -17998.8    26106.2   -0.69  0.49055    
-jbmo62[81] Cleaners and Laundry Workers                             -29621.6    20252.2   -1.46  0.14358    
-jbmo62[82] Construction and Mining Labourers                        -23799.0    20277.3   -1.17  0.24053    
-jbmo62[83] Factory Process Workers                                  -17640.2    20250.7   -0.87  0.38371    
-jbmo62[84] Farm, Forestry and Garden Workers                        -32157.6    20270.8   -1.59  0.11266    
-jbmo62[85] Food Preparation Assistants                              -29999.7    20270.8   -1.48  0.13890    
-jbmo62[89] Other Labourers                                          -31473.5    20253.0   -1.55  0.12019    
-ancob[1201] New Zealand                                               1462.9     1043.0    1.40  0.16077    
-ancob[1302] Papua New Guinea                                         -1798.9     3254.1   -0.55  0.58040    
-ancob[1303] Solomon Islands                                         -13176.6    14331.0   -0.92  0.35787    
-ancob[1402] Kiribati                                                 -3236.8    16533.1   -0.20  0.84478    
-ancob[1405] Nauru                                                   -10799.4    20257.0   -0.53  0.59395    
-ancob[1501] Cook Islands                                             26209.0    14355.0    1.83  0.06789 .  
-ancob[1502] Fiji                                                     -5581.1     2831.7   -1.97  0.04874 *  
-ancob[1505] Samoa                                                     9648.1     6113.5    1.58  0.11454    
-ancob[1508] Tonga                                                     4806.3     7412.3    0.65  0.51672    
-ancob[2100] United Kingdom                                            1561.0      700.2    2.23  0.02580 *  
-ancob[2201] Ireland                                                  -5535.4     3028.6   -1.83  0.06760 .  
-ancob[2301] Austria                                                  -2999.3     6420.6   -0.47  0.64040    
-ancob[2302] Belgium                                                   6617.1     7404.4    0.89  0.37150    
-ancob[2303] France                                                   -5823.7     5147.7   -1.13  0.25793    
-ancob[2304] Germany                                                  -3289.3     2058.4   -1.60  0.11005    
-ancob[2308] Netherlands                                               2897.8     2323.5    1.25  0.21235    
-ancob[2311] Switzerland                                             -13721.4     6951.9   -1.97  0.04842 *  
-ancob[2401] Denmark                                                  -7742.3    10119.7   -0.77  0.44423    
-ancob[2403] Finland                                                   9368.6     8271.3    1.13  0.25736    
-ancob[2405] Iceland                                                  -3231.5    14323.9   -0.23  0.82151    
-ancob[2406] Norway                                                   -1245.8    14378.2   -0.09  0.93095    
-ancob[2407] Sweden                                                    1624.6     6757.7    0.24  0.81002    
-ancob[3104] Italy                                                    -4028.9     2484.5   -1.62  0.10490    
-ancob[3105] Malta                                                     9742.9     4653.2    2.09  0.03628 *  
-ancob[3106] Portugal                                                  4116.9     5748.7    0.72  0.47391    
-ancob[3108] Spain                                                    -2927.7     5236.0   -0.56  0.57607    
-ancob[3202] Bosnia and Herzegovina                                    2542.8     8273.8    0.31  0.75860    
-ancob[3203] Bulgaria                                                -29693.9     8280.7   -3.59  0.00034 ***
-ancob[3204] Croatia                                                   8768.5     3708.0    2.36  0.01805 *  
-ancob[3205] Cyprus                                                   43367.0     8655.4    5.01  5.5e-07 ***
-ancob[3206] Former Yugoslav Republic of Macedonia (FYROM)           -14675.0     5075.4   -2.89  0.00384 ** 
-ancob[3207] Greece                                                    1058.9     5629.7    0.19  0.85080    
-ancob[3211] Romania                                                  15767.0     5518.9    2.86  0.00428 ** 
-ancob[3213] Yugoslavia Federal Republic of                            4446.1     2874.5    1.55  0.12194    
-ancob[3301] Belarus                                                  -5966.5    28670.2   -0.21  0.83515    
-ancob[3302] Czech Republic                                           -3535.2     5328.2   -0.66  0.50702    
-ancob[3303] Estonia                                                 -10040.6    11733.3   -0.86  0.39215    
-ancob[3304] Hungary                                                  -8954.6     5069.7   -1.77  0.07736 .  
-ancob[3305] Latvia                                                  -51434.1    16531.2   -3.11  0.00186 ** 
-ancob[3306] Lithuania                                                37497.4    20239.9    1.85  0.06394 .  
-ancob[3307] Poland                                                    -871.2     3043.1   -0.29  0.77467    
-ancob[3308] Russian Federation                                      -10518.9     5079.2   -2.07  0.03837 *  
-ancob[3311] Slovakia                                                   626.3    20255.7    0.03  0.97533    
-ancob[3312] Ukraine                                                  -8533.1     7164.7   -1.19  0.23367    
-ancob[4102] Egypt                                                    -8242.9     3980.9   -2.07  0.03840 *  
-ancob[4103] Libya                                                     4130.6    14315.1    0.29  0.77293    
-ancob[4105] Sudan                                                   -29504.8     7951.1   -3.71  0.00021 ***
-ancob[4203] Iran                                                     -6422.5     4848.0   -1.32  0.18526    
-ancob[4204] Iraq                                                    -16697.1     6404.0   -2.61  0.00913 ** 
-ancob[4205] Israel                                                  -38970.3    28604.9   -1.36  0.17309    
-ancob[4207] Kuwait                                                   -6342.4    28604.3   -0.22  0.82453    
-ancob[4208] Lebanon                                                  -9850.8     3873.6   -2.54  0.01099 *  
-ancob[4214] Syria                                                     3123.5    10828.0    0.29  0.77299    
-ancob[4215] Turkey                                                    5242.0     4994.7    1.05  0.29395    
-ancob[5101] Burma (Myanmar)                                          -4671.8     7673.4   -0.61  0.54264    
-ancob[5102] Cambodia                                                 -7979.2     6258.6   -1.27  0.20234    
-ancob[5103] Laos                                                     26968.0     9065.2    2.97  0.00293 ** 
-ancob[5104] Thailand                                                 -1421.4     9064.9   -0.16  0.87540    
-ancob[5105] Vietnam                                                   2699.1     2074.8    1.30  0.19331    
-ancob[5201] Brunei Darussalam                                        -8429.0    16525.3   -0.51  0.61001    
-ancob[5202] Indonesia                                                -9324.2     3911.1   -2.38  0.01713 *  
-ancob[5203] Malaysia                                                 -2529.8     2755.8   -0.92  0.35863    
-ancob[5204] Philippines                                              -2141.2     1782.6   -1.20  0.22969    
-ancob[5205] Singapore                                               -15980.1     4845.7   -3.30  0.00098 ***
-ancob[5206] East Timor                                                3406.9     7171.0    0.48  0.63472    
-ancob[6101] China (excludes SARs and Taiwan)                        -10771.4     2339.2   -4.60  4.1e-06 ***
-ancob[6102] Hong Kong (SAR of China)                                 -9788.3     3012.1   -3.25  0.00116 ** 
-ancob[6105] Taiwan                                                  -20111.6     5071.7   -3.97  7.3e-05 ***
-ancob[6201] Japan                                                    -5624.7     4597.6   -1.22  0.22119    
-ancob[6203] Korea, Republic of (South)                              -16609.0    10823.1   -1.53  0.12490    
-ancob[7101] Bangladesh                                               -6527.7     5432.0   -1.20  0.22948    
-ancob[7103] India                                                     -763.8     2166.1   -0.35  0.72437    
-ancob[7105] Nepal                                                   -15594.1     6273.2   -2.49  0.01293 *  
-ancob[7106] Pakistan                                                  4647.2     8640.9    0.54  0.59071    
-ancob[7107] Sri Lanka                                                 2457.9     2649.3    0.93  0.35355    
-ancob[7201] Afghanistan                                             -11452.3     7947.0   -1.44  0.14957    
-ancob[7203] Azerbaijan                                               -8941.0    28604.1   -0.31  0.75460    
-ancob[8102] Canada                                                    8849.9     3533.6    2.50  0.01227 *  
-ancob[8104] United States of America                                 -1302.2     2547.6   -0.51  0.60927    
-ancob[8201] Argentina                                                 1068.7     6113.5    0.17  0.86122    
-ancob[8203] Brazil                                                    9517.0     7667.9    1.24  0.21456    
-ancob[8204] Chile                                                    -5855.5     4432.7   -1.32  0.18652    
-ancob[8205] Colombia                                                 -9732.9     6266.2   -1.55  0.12038    
-ancob[8206] Ecuador                                                 104139.2    28678.3    3.63  0.00028 ***
-ancob[8213] Peru                                                      1097.8     7167.5    0.15  0.87827    
-ancob[8215] Uruguay                                                  -3922.6     6585.7   -0.60  0.55144    
-ancob[8216] Venezuela                                                -6234.3    12813.9   -0.49  0.62660    
-ancob[8299] South America, nec                                       -2776.4    28690.1   -0.10  0.92291    
-ancob[8303] El Salvador                                              37545.6    16534.2    2.27  0.02317 *  
-ancob[8415] Jamaica                                                  -5919.1    10137.9   -0.58  0.55932    
-ancob[8425] Trinidad and Tobago                                     -20789.9    14316.7   -1.45  0.14647    
-ancob[9107] Congo                                                   -15921.8    20245.5   -0.79  0.43162    
-ancob[9112] Equatorial Guinea                                       -26358.2    14316.4   -1.84  0.06561 .  
-ancob[9115] Ghana                                                    46375.7    14331.7    3.24  0.00121 ** 
-ancob[9124] Nigeria                                                   -501.2    16558.5   -0.03  0.97586    
-ancob[9207] Ethiopia                                                 -6508.0    12801.3   -0.51  0.61119    
-ancob[9208] Kenya                                                   -10999.3     8642.4   -1.27  0.20313    
-ancob[9212] Madagascar                                               -5495.0    14320.2   -0.38  0.70119    
-ancob[9213] Malawi                                                   -1720.5    16547.3   -0.10  0.91719    
-ancob[9214] Mauritius                                                 4013.1     4143.2    0.97  0.33276    
-ancob[9216] Mozambique                                                7930.2    10123.1    0.78  0.43341    
-ancob[9224] Somalia                                                 -34191.9    12809.3   -2.67  0.00760 ** 
-ancob[9225] South Africa                                             -2836.6     1970.2   -1.44  0.14994    
-ancob[9227] Tanzania                                                 -8651.3     9063.2   -0.95  0.33981    
-ancob[9231] Zambia                                                    4357.6     5851.5    0.74  0.45646    
-ancob[9232] Zimbabwe                                                  4310.3     5153.8    0.84  0.40298    
-ancob[9299] Southern and East Africa                                 -7270.5    16525.8   -0.44  0.65998    
-anengfn                                                               -531.4      655.1   -0.81  0.41723    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 28600 on 31956 degrees of freedom
-  (72956 observations deleted due to missingness)
-Multiple R-squared:  0.288,	Adjusted R-squared:  0.284 
-F-statistic: 78.8 on 164 and 31956 DF,  p-value: <2e-16
-```
-
-```
-Analysis of Variance Table
-
-Response: wsfei
-                    Df   Sum Sq  Mean Sq F value Pr(>F)    
-wave                 1 7.10e+10 7.10e+10   86.88 <2e-16 ***
-sex                  1 1.74e+12 1.74e+12 2123.27 <2e-16 ***
-age_at_interview     1 7.75e+11 7.75e+11  948.38 <2e-16 ***
-edhigh1              7 3.62e+12 5.17e+11  632.51 <2e-16 ***
-jbmo62              46 4.11e+12 8.93e+10  109.19 <2e-16 ***
-ancob              107 2.62e+11 2.45e+09    3.00 <2e-16 ***
-anengfn              1 5.38e+08 5.38e+08    0.66   0.42    
-Residuals        31956 2.61e+13 8.18e+08                   
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
-Now we can load the *mgcv* package and use generalized additive models to analyse the data, smoothing the effect of *age_at_interview*. 
-
-For brevity of output, an anova shows that every covariate is significant.
-
-
-```
-
-Family: gaussian 
-Link function: identity 
-
-Formula:
-wsfei ~ wave + sex + s(age_at_interview) + edhigh1 + jbmo62 + 
-    ancob
-
-Parametric Terms:
-         df       F p-value
-wave      1 2999.70  <2e-16
-sex       1 3941.19  <2e-16
-edhigh1   7  367.84  <2e-16
-jbmo62   49  278.37  <2e-16
-ancob   127    6.32  <2e-16
-
-Approximate significance of smooth terms:
-                     edf Ref.df   F p-value
-s(age_at_interview) 8.92   8.99 357  <2e-16
-```
-
-![plot of chunk model20](HILDA_files/figure-html/model20.png) 
-
-Very simple model, it looks like there is a non-linear effect of *age_at_interview*.
-Repeat the same analysis smoothing also the wave:
-
-
-```
-
-Family: gaussian 
-Link function: identity 
-
-Formula:
-wsfei ~ s(wave) + sex + s(age_at_interview) + edhigh1 + jbmo62 + 
-    ancob
-
-Parametric Terms:
-         df       F p-value
-sex       1 3943.85  <2e-16
-edhigh1   7  368.97  <2e-16
-jbmo62   49  278.42  <2e-16
-ancob   127    6.33  <2e-16
-
-Approximate significance of smooth terms:
-                     edf Ref.df   F p-value
-s(wave)             4.31   5.30 573  <2e-16
-s(age_at_interview) 8.91   8.99 357  <2e-16
-```
-
-![plot of chunk model21](HILDA_files/figure-html/model21.png) 
-
-It looks we don't need to smooth the wave variable, as the effect is linear.
-
-Finally we can look into the interaction of education and occupation (edhigh1 * jbmo62).
-
-
-```
-
-Family: gaussian 
-Link function: identity 
-
-Formula:
-wsfei ~ wave + sex + s(age_at_interview) + edhigh1 * jbmo62 + 
-    ancob
-
-Parametric Terms:
-                df       F p-value
-wave             1 3015.03  <2e-16
-sex              1 3920.54  <2e-16
-edhigh1          7    1.96   0.057
-jbmo62          49   29.03  <2e-16
-ancob          127    5.46  <2e-16
-edhigh1:jbmo62 287    8.01  <2e-16
-
-Approximate significance of smooth terms:
-                     edf Ref.df   F p-value
-s(age_at_interview) 8.90   8.99 341  <2e-16
-```
-
-![plot of chunk model22](HILDA_files/figure-html/model22.png) 
-
-Results show that the level of education is not significant per se, but only in combination with the occupation.
 
 ## Models suggested by Max:
 
@@ -371,13 +70,34 @@ Results show that the level of education is not significant per se, but only in 
 * jbmo62 [occupation]
 * jbmwpsz [no employees]
 * jbocct [tenure current job]
+* ehtse [years since studying FT]
 
 ### Analyses 
 
-In the next two analyses (fit27, fit28), we will fit two identical models with different dependent variables: wsfei (annual salary) and wage_perc (the annual salary is transformed into the percentile specific to the subject's occupation).
+In fit26, we fit the number of hours worked against several covs.
+In the next analyses, we will fit identical models with different dependent variables: 
+1. fit27: wsfei (annual salary); 
+2. fit27weekly: wscei (weekly salary); 
+3. fit27hrwage: hrw (hourly salary) 
+4. fit28: wage_perc (the annual salary is transformed into the percentile specific to the subject's occupation).
+5. In the third fit (fit29), we add the random effects over the subjects (the fit fails when using the annual salary as dependent variable, but succesfully converge with wages_perc).
 
-In the third fit (fit29), we add the random effects over the subjects (the fit fails when using the annual salary as dependent variable, but succesfully converge with wages_perc).
 
+```r
+library(mgcv)
+```
+
+```
+Loading required package: nlme
+This is mgcv 1.8-6. For overview type 'help("mgcv-package")'.
+```
+
+```r
+x2=x[x$jbhru>=0 & x$jbhru<100,]
+model26=(jbhru ~ s(wave) +  s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit26 = gam(model26, data=x2)
+anova(fit26)
+```
 
 ```
 
@@ -385,34 +105,249 @@ Family: gaussian
 Link function: identity 
 
 Formula:
-wsfei ~ s(wave) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + 
+jbhru ~ s(wave) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + 
     edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + 
     jbmwpsz + jbocct + aneab
 
 Parametric Terms:
-        df       F p-value
-sex      1 1909.66 < 2e-16
-ancob3   2   16.18 9.4e-08
-edhigh1  7  236.37 < 2e-16
-jbmo62  49  161.90 < 2e-16
-edcoq   69    3.46 < 2e-16
-edqenr   1   30.23 3.8e-08
-fmfo61  12    7.63 2.5e-14
-fmmo61  11    3.32 0.00014
-esdtl    2 2244.74 < 2e-16
-mrcurr   7   47.87 < 2e-16
-hhstate  8   33.04 < 2e-16
-jbmwpsz 12  482.32 < 2e-16
-jbocct   1  496.74 < 2e-16
-aneab    1   11.03 0.00090
+        df         F  p-value
+sex      1   945.767  < 2e-16
+ancob3   2     2.386   0.0920
+edhigh1  7    20.386  < 2e-16
+jbmo62  49   107.612  < 2e-16
+edcoq   68     2.990 2.17e-15
+edqenr   1    42.964 5.61e-11
+fmfo61  12    11.598  < 2e-16
+fmmo61  11     6.480 7.06e-11
+esdtl    1 91038.321  < 2e-16
+mrcurr   7     6.261 2.32e-07
+hhstate  8    22.282  < 2e-16
+jbmwpsz 12     6.067 9.65e-11
+jbocct   1   162.884  < 2e-16
+aneab    1     6.320   0.0119
 
 Approximate significance of smooth terms:
-          edf Ref.df   F p-value
-s(wave)  8.04   8.59 148  <2e-16
-s(hgage) 8.79   8.97 182  <2e-16
+           edf Ref.df      F  p-value
+s(wave)  1.000  1.000  57.02 4.36e-14
+s(hgage) 8.944  8.998 223.23  < 2e-16
 ```
 
-![plot of chunk analyze_annual_salary_complete](HILDA_files/figure-html/analyze_annual_salary_complete1.png) 
+```r
+plot(fit26,pages=1, scale=-1, rug=F)
+```
+
+![](HILDA_files/figure-html/fit26-1.png) 
+
+There is no indication of any effect of the global crisis on the number of hours worked per week.
+
+
+```r
+library(mgcv)
+model27=(log(wsfei) ~ s(wave) +  s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27 = gam(model27, data=x)
+anova(fit27)
+```
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+log(wsfei) ~ s(wave) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + 
+    edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + 
+    jbmwpsz + jbocct + aneab
+
+Parametric Terms:
+        df        F  p-value
+sex      1   92.551  < 2e-16
+ancob3   2   12.154 5.28e-06
+edhigh1  7   16.592  < 2e-16
+jbmo62  49  102.987  < 2e-16
+edcoq   69    2.530 4.32e-11
+edqenr   1    3.848 0.049794
+fmfo61  12    4.584 1.82e-07
+fmmo61  11    3.303 0.000149
+esdtl    2  806.216  < 2e-16
+mrcurr   7    9.180 2.14e-11
+hhstate  8    7.983 8.17e-11
+jbmwpsz 12 1323.429  < 2e-16
+jbocct   1   16.252 5.55e-05
+aneab    1    7.588 0.005878
+
+Approximate significance of smooth terms:
+           edf Ref.df      F p-value
+s(wave)  8.871  8.990  34.67  <2e-16
+s(hgage) 8.756  8.962 238.04  <2e-16
+```
+
+```r
+plot(fit27,pages=1, scale=-1, rug=F)
+```
+
+![](HILDA_files/figure-html/fit27-1.png) 
+
+
+```r
+library(mgcv)
+model27bis=(log(wsfei) ~ s(wave) +  s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab + jbhru)
+fit27bis = gam(model27bis, data=x)
+anova(fit27bis)
+```
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+log(wsfei) ~ s(wave) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + 
+    edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + 
+    jbmwpsz + jbocct + aneab + jbhru
+
+Parametric Terms:
+        df        F  p-value
+sex      1   94.286  < 2e-16
+ancob3   2   12.164 5.22e-06
+edhigh1  7   16.534  < 2e-16
+jbmo62  49  102.804  < 2e-16
+edcoq   69    2.539 3.50e-11
+edqenr   1    3.754 0.052687
+fmfo61  12    4.531 2.36e-07
+fmmo61  11    3.308 0.000146
+esdtl    2  799.455  < 2e-16
+mrcurr   7    9.199 2.01e-11
+hhstate  8    8.376 1.95e-11
+jbmwpsz 12 1315.869  < 2e-16
+jbocct   1   15.308 9.14e-05
+aneab    1    7.644 0.005696
+jbhru    1   52.195 5.06e-13
+
+Approximate significance of smooth terms:
+           edf Ref.df      F p-value
+s(wave)  8.876  8.991  33.72  <2e-16
+s(hgage) 8.765  8.964 238.04  <2e-16
+```
+
+```r
+plot(fit27bis,pages=1, scale=-1, rug=F)
+```
+
+![](HILDA_files/figure-html/fit27bis-1.png) 
+
+In fit27bis we repeat the same regression as in fit27, but consider the weekly worked hours as a covariate (significant). The effect of wave over the salary is similar as in fit27.
+
+
+```r
+library(mgcv)
+x2=x[x$wscei>0 & x$jbhru>0,]
+x2$wpw = x2$wscei/x2$jbhru
+model27weekly=(log(wscei) ~ s(wave) +  s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27weekly = gam(model27weekly, data=x2)
+anova(fit27weekly)
+```
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+log(wscei) ~ s(wave) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + 
+    edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + 
+    jbmwpsz + jbocct + aneab
+
+Parametric Terms:
+        df         F  p-value
+sex      1  1307.744  < 2e-16
+ancob3   2     5.055  0.00638
+edhigh1  7   210.913  < 2e-16
+jbmo62  49   132.048  < 2e-16
+edcoq   69     2.990 1.40e-15
+edqenr   1    44.525 2.53e-11
+fmfo61  12     6.270 3.34e-11
+fmmo61  11     4.702 3.08e-07
+esdtl    2 12278.319  < 2e-16
+mrcurr   7    60.397  < 2e-16
+hhstate  8    48.745  < 2e-16
+jbmwpsz 12   247.172  < 2e-16
+jbocct   1   704.239  < 2e-16
+aneab    1     1.559  0.21180
+
+Approximate significance of smooth terms:
+           edf Ref.df      F p-value
+s(wave)  6.342  7.385  357.1  <2e-16
+s(hgage) 8.939  8.997 1052.3  <2e-16
+```
+
+```r
+plot(fit27weekly,pages=1, scale=-1, rug=F)
+```
+
+![](HILDA_files/figure-html/fit27weekly-1.png) 
+
+The global crisis effect is not as strong as using the annual salary as the dependent variable.
+
+
+```r
+library(mgcv)
+x2=x[x$wscei>0 & x$jbhru>0,]
+x2$hrw = x2$wscei/x2$jbhru
+model27hrwage=(hrw ~ s(wave) +  s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27hrwage = gam(model27hrwage, data=x2)
+anova(fit27hrwage)
+```
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+hrw ~ s(wave) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + 
+    edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + 
+    jbmwpsz + jbocct + aneab
+
+Parametric Terms:
+        df       F  p-value
+sex      1 396.256  < 2e-16
+ancob3   2   4.163 0.015571
+edhigh1  7 100.792  < 2e-16
+jbmo62  49  44.511  < 2e-16
+edcoq   69   1.512 0.003894
+edqenr   1   8.450 0.003652
+fmfo61  12   4.574 1.91e-07
+fmmo61  11   3.239 0.000195
+esdtl    2 273.556  < 2e-16
+mrcurr   7  30.143  < 2e-16
+hhstate  8  21.037  < 2e-16
+jbmwpsz 12  38.551  < 2e-16
+jbocct   1 154.220  < 2e-16
+aneab    1   0.814 0.366993
+
+Approximate significance of smooth terms:
+           edf Ref.df      F p-value
+s(wave)  3.888  4.860 178.24  <2e-16
+s(hgage) 7.915  8.445  42.68  <2e-16
+```
+
+```r
+plot(fit27hrwage,pages=1, scale=-1, rug=F)
+```
+
+![](HILDA_files/figure-html/fit27hrwage-1.png) 
+
+There has been a slower increase of the hourly wage as an effect of the global crisis. This has nothing to do with the status of native or migrant (ancob3) or the knowledge of English (aneab)
+
+
+
+
+```r
+library(mgcv)
+model28=(wages_perc ~ s(wave) +  s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit28 = gam(model28, data=x)
+anova(fit28)
+```
 
 ```
 
@@ -425,29 +360,34 @@ wages_perc ~ s(wave) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 +
     jbmwpsz + jbocct + aneab
 
 Parametric Terms:
-        df       F p-value
-sex      1 1795.85 < 2e-16
-ancob3   2   11.05 1.6e-05
-edhigh1  7  165.18 < 2e-16
-jbmo62  49  289.08 < 2e-16
-edcoq   69    3.30 < 2e-16
-edqenr   1   31.28 2.2e-08
-fmfo61  12    3.09 0.00022
-fmmo61  11    2.54 0.00326
-esdtl    2 6001.02 < 2e-16
-mrcurr   7   38.63 < 2e-16
-hhstate  8   34.49 < 2e-16
-jbmwpsz 12  951.45 < 2e-16
-jbocct   1  881.82 < 2e-16
-aneab    1   11.85 0.00058
+        df        F  p-value
+sex      1 1795.903  < 2e-16
+ancob3   2   11.049 1.59e-05
+edhigh1  7  165.177  < 2e-16
+jbmo62  49  289.081  < 2e-16
+edcoq   69    3.302  < 2e-16
+edqenr   1   31.281 2.24e-08
+fmfo61  12    3.089 0.000218
+fmmo61  11    2.544 0.003255
+esdtl    2 6000.931  < 2e-16
+mrcurr   7   38.636  < 2e-16
+hhstate  8   34.489  < 2e-16
+jbmwpsz 12  951.440  < 2e-16
+jbocct   1  881.819  < 2e-16
+aneab    1   11.846 0.000578
 
 Approximate significance of smooth terms:
-          edf Ref.df   F p-value
-s(wave)  8.69   8.95 229  <2e-16
-s(hgage) 8.08   8.59 658  <2e-16
+           edf Ref.df     F p-value
+s(wave)  8.694  8.946 229.3  <2e-16
+s(hgage) 8.084  8.587 657.8  <2e-16
 ```
 
-![plot of chunk analyze_annual_salary_complete](HILDA_files/figure-html/analyze_annual_salary_complete2.png) 
+```r
+plot(fit28,pages=1, scale=-1, rug=F)
+```
+
+![](HILDA_files/figure-html/fit28-1.png) 
+
 
 ```
 
@@ -460,29 +400,29 @@ wages_perc ~ s(wave) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 +
     jbmwpsz + jbocct + aneab
 
 Parametric Terms:
-        df       F p-value
-sex      1 1083.31  <2e-16
-ancob3   2    1.94  0.1435
-edhigh1  7   96.60  <2e-16
-jbmo62  49  374.94  <2e-16
-edcoq   69    1.94   5e-06
-edqenr   1   18.22   2e-05
-fmfo61  12    1.07  0.3819
-fmmo61  11    2.22  0.0110
-esdtl    2 2941.58  <2e-16
-mrcurr   7   16.96  <2e-16
-hhstate  8   13.57  <2e-16
-jbmwpsz 12  377.13  <2e-16
-jbocct   1  324.03  <2e-16
-aneab    1    8.34  0.0039
+        df        F  p-value
+sex      1 1083.306  < 2e-16
+ancob3   2    1.941  0.14354
+edhigh1  7   96.599  < 2e-16
+jbmo62  49  374.937  < 2e-16
+edcoq   69    1.938 4.96e-06
+edqenr   1   18.223 1.97e-05
+fmfo61  12    1.069  0.38187
+fmmo61  11    2.223  0.01097
+esdtl    2 2941.579  < 2e-16
+mrcurr   7   16.959  < 2e-16
+hhstate  8   13.566  < 2e-16
+jbmwpsz 12  377.133  < 2e-16
+jbocct   1  324.031  < 2e-16
+aneab    1    8.338  0.00388
 
 Approximate significance of smooth terms:
-          edf Ref.df   F p-value
-s(wave)  7.20   7.20 520  <2e-16
-s(hgage) 8.58   8.58 608  <2e-16
+           edf Ref.df     F p-value
+s(wave)  7.203  7.203 520.1  <2e-16
+s(hgage) 8.581  8.581 607.7  <2e-16
 ```
 
-![plot of chunk analyze_annual_salary_complete](HILDA_files/figure-html/analyze_annual_salary_complete3.png) 
+![](HILDA_files/figure-html/fit29-1.png) 
 
 The last fit (fit29) shows that the effect on the wave can be assumed linear and a few covariates are no more significant and can be eliminated from the model. These are:
 
@@ -491,7 +431,264 @@ The last fit (fit29) shows that the effect on the wave can be assumed linear and
 
 This result can be interpreted considering that the dependent variable is the salary percentile of the subject specific to his job. The occupation of the parents and the status of migrant could contribute to choice of the job, but not to the salary in it (hypothesis to test).
 
-Now we elaborate on model28, removing wage from the model and using two temporal variables: the age of subject (a variable changing each year: yrivwfst-(2012-yrivwfst)-1+wave) and its date of birth (here we can use hgage, or dob=2012-hgage).
+## fit27: wave stratified by age groups
+
+
+```r
+library(mgcv)
+age_limits = c(15,25,35,45,55)
+age_category = findInterval(x$hgage, age_limits)
+x$wave_age1 = x$wave_age2 = x$wave_age3 = x$wave_age4 = x$wave_age5 = 0
+x$wave_age1[which(age_category == 1)] = x$wave[which(age_category == 1)] 
+x$wave_age2[which(age_category == 2)] = x$wave[which(age_category == 2)] 
+x$wave_age3[which(age_category == 3)] = x$wave[which(age_category == 3)] 
+x$wave_age4[which(age_category == 4)] = x$wave[which(age_category == 4)] 
+x$wave_age5[which(age_category == 5)] = x$wave[which(age_category == 5)] 
+
+model27byAge=(log(wsfei) ~ s(wave_age1) + s(wave_age2) + s(wave_age3) + s(wave_age4) + s(wave_age5) +  s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27byAge = gam(model27byAge, data=x)
+anova(fit27byAge)
+```
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+log(wsfei) ~ s(wave_age1) + s(wave_age2) + s(wave_age3) + s(wave_age4) + 
+    s(wave_age5) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + 
+    edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + 
+    jbmwpsz + jbocct + aneab
+
+Parametric Terms:
+        df        F  p-value
+sex      1   92.918  < 2e-16
+ancob3   2   11.767 7.77e-06
+edhigh1  7   16.018  < 2e-16
+jbmo62  49  103.238  < 2e-16
+edcoq   69    2.431 3.46e-10
+edqenr   1    3.453 0.063151
+fmfo61  12    4.614 1.56e-07
+fmmo61  11    3.307 0.000147
+esdtl    2  805.756  < 2e-16
+mrcurr   7    9.367 1.17e-11
+hhstate  8    8.021 7.12e-11
+jbmwpsz 12 1319.778  < 2e-16
+jbocct   1   16.369 5.22e-05
+aneab    1    7.622 0.005768
+
+Approximate significance of smooth terms:
+               edf Ref.df       F  p-value
+s(wave_age1) 7.601  8.455   6.254 2.25e-08
+s(wave_age2) 6.993  8.001   9.764 1.19e-13
+s(wave_age3) 7.243  8.189  14.767  < 2e-16
+s(wave_age4) 6.936  7.955   8.910 3.46e-12
+s(wave_age5) 7.657  8.507   9.114 4.35e-13
+s(hgage)     8.594  8.911 195.538  < 2e-16
+```
+
+```r
+plot(fit27byAge,pages=1, scale=-1, rug=F)
+```
+
+![](HILDA_files/figure-html/fit27byAge-1.png) 
+
+The effect of the global crisis has been similar in all the 5 age groups.
+
+## fit27: wave stratified by migration status (Australians vs English speaking migrants vs other migrants)
+
+
+```r
+library(mgcv)
+x$wave_au = x$wave_anglo = x$wave_others = 0
+x$wave_au[x$ancob3=="australians"] = x$wave[x$ancob3=="australians"] 
+x$wave_anglo[x$ancob3=="imm_anglo"] = x$wave[x$ancob3=="imm_anglo"] 
+x$wave_others[x$ancob3=="imm_others"] = x$wave[x$ancob3=="imm_others"] 
+
+model27byMigrationStatus=(log(wsfei) ~ s(wave_au) + s(wave_anglo) + s(wave_others) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct) # aneab cannot stay in the regression as few unique covariate combinations with wave_*
+fit27byMigrationStatus = gam(model27byMigrationStatus, data=x)
+anova(fit27byMigrationStatus)
+```
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+log(wsfei) ~ s(wave_au) + s(wave_anglo) + s(wave_others) + s(hgage) + 
+    sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + 
+    fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct
+
+Parametric Terms:
+        df        F  p-value
+sex      1  102.866  < 2e-16
+ancob3   2    4.493  0.01119
+edhigh1  7   18.397  < 2e-16
+jbmo62  49  107.996  < 2e-16
+edcoq   69    2.586 1.27e-11
+edqenr   1    3.574  0.05869
+fmfo61  12    5.460 2.20e-09
+fmmo61  11    3.318  0.00014
+esdtl    2  869.472  < 2e-16
+mrcurr   7   10.549 2.49e-13
+hhstate  8   10.667 4.15e-15
+jbmwpsz 12 1604.389  < 2e-16
+jbocct   1   17.716 2.57e-05
+
+Approximate significance of smooth terms:
+                 edf Ref.df       F  p-value
+s(wave_au)     9.000  9.000  32.362  < 2e-16
+s(wave_anglo)  6.738  7.679   9.116 5.11e-12
+s(wave_others) 6.613  7.580   9.031 9.42e-12
+s(hgage)       8.693  8.940 253.295  < 2e-16
+```
+
+```r
+plot(fit27byMigrationStatus,pages=1, scale=-1, rug=F) #all.terms=T
+```
+
+![](HILDA_files/figure-html/fit27byMigrationStatus-1.png) 
+
+No differences in migration status.
+
+## fit27: wave stratified by education
+
+
+```r
+library(mgcv)
+x$wave_ed1 = x$wave_ed2 = x$wave_ed3 = x$wave_ed4 = x$wave_ed5 = x$wave_ed6 = x$wave_ed7 = x$wave_ed8 = 0
+ed_lev = levels(droplevels(x$edhigh1))
+x$wave_ed1[x$edhigh1==ed_lev[1]] = x$wave[x$edhigh1==ed_lev[1]] 
+x$wave_ed2[x$edhigh1==ed_lev[2]] = x$wave[x$edhigh1==ed_lev[2]] 
+x$wave_ed3[x$edhigh1==ed_lev[3]] = x$wave[x$edhigh1==ed_lev[3]] 
+x$wave_ed4[x$edhigh1==ed_lev[4]] = x$wave[x$edhigh1==ed_lev[4]] 
+x$wave_ed5[x$edhigh1==ed_lev[5]] = x$wave[x$edhigh1==ed_lev[5]] 
+x$wave_ed6[x$edhigh1==ed_lev[6]] = x$wave[x$edhigh1==ed_lev[6]] 
+x$wave_ed7[x$edhigh1==ed_lev[7]] = x$wave[x$edhigh1==ed_lev[7]] 
+x$wave_ed8[x$edhigh1==ed_lev[8]] = x$wave[x$edhigh1==ed_lev[8]] 
+
+model27byEducation=(log(wsfei) ~ s(wave_ed1) + s(wave_ed2) + s(wave_ed3) + s(wave_ed4) + s(wave_ed5) + s(wave_ed6) + s(wave_ed7) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27byEducation = gam(model27byEducation, data=x)
+anova(fit27byEducation)
+```
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+log(wsfei) ~ s(wave_ed1) + s(wave_ed2) + s(wave_ed3) + s(wave_ed4) + 
+    s(wave_ed5) + s(wave_ed6) + s(wave_ed7) + s(hgage) + sex + 
+    ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + 
+    esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab
+
+Parametric Terms:
+        df        F  p-value
+sex      1   92.068  < 2e-16
+ancob3   2   11.541 9.73e-06
+edhigh1  7    3.149 0.002499
+jbmo62  49  103.066  < 2e-16
+edcoq   69    2.360 1.53e-09
+edqenr   1    4.076 0.043503
+fmfo61  12    4.566 1.99e-07
+fmmo61  11    3.291 0.000157
+esdtl    2  806.134  < 2e-16
+mrcurr   7    9.200 2.01e-11
+hhstate  8    8.008 7.46e-11
+jbmwpsz 12 1321.385  < 2e-16
+jbocct   1   16.090 6.04e-05
+aneab    1    7.135 0.007561
+
+Approximate significance of smooth terms:
+              edf Ref.df       F  p-value
+s(wave_ed1) 3.775  4.661   1.892 0.097315
+s(wave_ed2) 4.243  5.213   1.387 0.222517
+s(wave_ed3) 5.400  6.477   3.873 0.000528
+s(wave_ed4) 8.851  8.986   6.579 2.01e-09
+s(wave_ed5) 6.830  7.738  13.470  < 2e-16
+s(wave_ed6) 6.563  7.534   6.826 1.75e-08
+s(wave_ed7) 7.371  8.145  16.030  < 2e-16
+s(hgage)    8.753  8.961 236.740  < 2e-16
+```
+
+```r
+plot(fit27byEducation,pages=1, scale=-1, rug=F) #all.terms=T
+```
+
+![](HILDA_files/figure-html/fit27byEducation-1.png) 
+
+There is a weak effect: the higher the education level, the lighter the effect of the global crisis.
+
+## fit27: wave stratified by skilled jobs (3 categories)
+
+
+```r
+library(mgcv)
+x$wave_skill1 = x$wave_skill2 = x$wave_skill3 = 0
+skill_limits = c(1,4,7)
+skill_category = findInterval(as.integer(sapply(x$jbmo62, substr, 2,2)), skill_limits)
+x$wave_skill1[which(skill_category==1)] = x$wave[which(skill_category==1)] 
+x$wave_skill2[which(skill_category==2)] = x$wave[which(skill_category==2)] 
+x$wave_skill3[which(skill_category==3)] = x$wave[which(skill_category==3)] 
+
+model27bySkilledJobs=(log(wsfei) ~ s(x$wave_skill1) + s(x$wave_skill2) + s(x$wave_skill3) + s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27bySkilledJobs = gam(model27bySkilledJobs, data=x)
+anova(fit27bySkilledJobs)
+```
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+log(wsfei) ~ s(x$wave_skill1) + s(x$wave_skill2) + s(x$wave_skill3) + 
+    s(hgage) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + 
+    fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + 
+    aneab
+
+Parametric Terms:
+        df        F  p-value
+sex      1   91.962  < 2e-16
+ancob3   2   12.087 5.64e-06
+edhigh1  7   16.701  < 2e-16
+jbmo62  49   99.808  < 2e-16
+edcoq   69    2.656 2.73e-12
+edqenr   1    4.043 0.044348
+fmfo61  12    4.593 1.73e-07
+fmmo61  11    3.289 0.000158
+esdtl    2  806.194  < 2e-16
+mrcurr   7    9.135 2.48e-11
+hhstate  8    7.985 8.11e-11
+jbmwpsz 12 1324.229  < 2e-16
+jbocct   1   16.270 5.50e-05
+aneab    1    7.517 0.006114
+
+Approximate significance of smooth terms:
+                   edf Ref.df      F  p-value
+s(x$wave_skill1) 9.000  9.000  22.75  < 2e-16
+s(x$wave_skill2) 8.866  8.986  13.91  < 2e-16
+s(x$wave_skill3) 7.025  7.904  10.11 5.71e-14
+s(hgage)         8.753  8.961 237.67  < 2e-16
+```
+
+```r
+plot(fit27bySkilledJobs,pages=1, scale=-1, rug=F) #all.terms=T
+```
+
+![](HILDA_files/figure-html/fit27bySkilledJobs-1.png) 
+
+No differences in job skill categories.
+
+
+## More on time-related covariates
+
+Two temporal variables: (check this, something wrong)
+* age = yrivwfst-(2012-yrivwfst)-1+wave (changing each year) 
+* date of birth (dob=2012-hgage)
 
 
 ```
@@ -505,29 +702,108 @@ wages_perc ~ s(dob) + s(age) + sex + ancob3 + edhigh1 + jbmo62 +
     jbmwpsz + jbocct + aneab
 
 Parametric Terms:
-        df       F p-value
-sex      1 1781.70 < 2e-16
-ancob3   2   10.36 3.2e-05
-edhigh1  7  163.13 < 2e-16
-jbmo62  49  286.89 < 2e-16
-edcoq   69    4.02 < 2e-16
-edqenr   1    8.68 0.00321
-fmfo61  12    2.99 0.00034
-fmmo61  11    2.81 0.00114
-esdtl    2 5914.58 < 2e-16
-mrcurr   7   32.14 < 2e-16
-hhstate  8   34.81 < 2e-16
-jbmwpsz 12  987.47 < 2e-16
-jbocct   1  894.80 < 2e-16
-aneab    1   11.40 0.00074
+        df        F  p-value
+sex      1 1781.745  < 2e-16
+ancob3   2   10.364 3.16e-05
+edhigh1  7  163.129  < 2e-16
+jbmo62  49  286.893  < 2e-16
+edcoq   69    4.022  < 2e-16
+edqenr   1    8.683 0.003213
+fmfo61  12    2.989 0.000341
+fmmo61  11    2.811 0.001137
+esdtl    2 5914.496  < 2e-16
+mrcurr   7   32.144  < 2e-16
+hhstate  8   34.811  < 2e-16
+jbmwpsz 12  987.459  < 2e-16
+jbocct   1  894.804  < 2e-16
+aneab    1   11.396 0.000736
 
 Approximate significance of smooth terms:
-        edf Ref.df   F p-value
-s(dob) 8.12   8.61 520  <2e-16
-s(age) 7.20   7.88 184  <2e-16
+         edf Ref.df     F p-value
+s(dob) 8.122  8.608 520.1  <2e-16
+s(age) 7.201  7.883 184.1  <2e-16
 ```
 
-![plot of chunk consider_age](HILDA_files/figure-html/consider_age.png) 
+![](HILDA_files/figure-html/consider_age-1.png) 
+
+Replace the age of subject with the years since studying FT (ehtse). Also, we now restrict the analysis to workers with info on years since last studying.
+
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+wages_perc ~ s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others) + 
+    sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + 
+    fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab
+
+Parametric Terms:
+        df        F  p-value
+sex      1 1806.914  < 2e-16
+ancob3   2    2.550 0.078126
+edhigh1  7  178.025  < 2e-16
+jbmo62  49  272.552  < 2e-16
+edcoq   68   18.217  < 2e-16
+edqenr   1    0.908 0.340708
+fmfo61  12    3.319 7.69e-05
+fmmo61  11    2.979 0.000574
+esdtl    2 5375.773  < 2e-16
+mrcurr   7   42.012  < 2e-16
+hhstate  8   31.140  < 2e-16
+jbmwpsz 12 1047.693  < 2e-16
+jbocct   1  851.848  < 2e-16
+aneab    1    6.926 0.008497
+
+Approximate significance of smooth terms:
+                  edf Ref.df       F  p-value
+s(ehtse_au)     8.806  8.987 395.367  < 2e-16
+s(ehtse_anglo)  7.515  8.456   3.965 7.76e-05
+s(ehtse_others) 5.389  6.535  20.596  < 2e-16
+```
+
+![](HILDA_files/figure-html/fit31-1.png) 
+
+Taking away ancob3 from the regression:
+
+
+```
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+wages_perc ~ s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others) + 
+    sex + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + 
+    esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab
+
+Parametric Terms:
+        df        F  p-value
+sex      1 1807.808  < 2e-16
+edhigh1  7  178.521  < 2e-16
+jbmo62  49  272.557  < 2e-16
+edcoq   68   18.140  < 2e-16
+edqenr   1    1.014  0.31404
+fmfo61  12    3.288 8.88e-05
+fmmo61  11    2.938  0.00068
+esdtl    2 5376.441  < 2e-16
+mrcurr   7   42.160  < 2e-16
+hhstate  8   31.257  < 2e-16
+jbmwpsz 12 1047.559  < 2e-16
+jbocct   1  851.767  < 2e-16
+aneab    1    9.163  0.00247
+
+Approximate significance of smooth terms:
+                  edf Ref.df      F p-value
+s(ehtse_au)     8.853  8.992 399.67  <2e-16
+s(ehtse_anglo)  7.151  8.178  65.57  <2e-16
+s(ehtse_others) 5.546  6.665 151.84  <2e-16
+```
+
+![](HILDA_files/figure-html/fit32-1.png) 
+
+
 ## Job satisfaction
 
 Guardando alla tua domanda di OSP e cose che potrebbero essere divertenti, la variabile  latente per eccellenza e' la Job satisfaction. Tra quella per i soldi e per sicurezza (jbmssec) mi sembra ci sia piu' variabilita' per Job satisfaction about pay (jbmspay) e potremmo vedere:
@@ -547,138 +823,250 @@ detto questo, mi sembra che il funzionale che tu stai usando e' legato al tempo:
 #### Satisfaction for job pay
 
 
+```
+
+Attaching package: 'ordinal'
+
+The following objects are masked from 'package:nlme':
+
+    ranef, VarCorr
+```
 
 Comparison of the effects on satisfation by salary vs wages_perc.
 
 ##### Salary:
 
 ```
-Warning: (2) Model is nearly unidentifiable: very large eigenvalue
- - Rescale variables? 
-In addition: Absolute and relative convergence criteria were met
-```
-
-```
-formula: jbmspay ~ hgsex + hgage + ancob3 + hhtype + jbocct + wsfei
+formula: jbmspay ~ hgsex + hgage + ancob3 + hhtype + jbocct + I(log(wsfei))
 data:    xsub
 
  link  threshold nobs   logLik     AIC       niter max.grad cond.H 
- logit flexible  104631 -214431.19 428944.37 6(0)  1.59e-07 5.9e+12
+ logit flexible  104631 -215296.62 430675.23 6(0)  5.69e-11 3.1e+06
 
 Coefficients:
-                                                                Estimate Std. Error z value Pr(>|z|)    
-hgsex[2] Female                                                 1.99e-01   1.13e-02   17.60  < 2e-16 ***
-hgage                                                           3.66e-03   5.13e-04    7.13  1.0e-12 ***
-ancob3australians                                               6.96e-02   2.20e-02    3.17  0.00154 ** 
-ancob3others                                                   -1.37e-01   2.59e-02   -5.28  1.3e-07 ***
-hhtype[2] Couple family wo children w other related            -1.46e-01   5.92e-02   -2.46  0.01405 *  
-hhtype[3] Couple family wo children w other not related        -3.30e-01   9.06e-02   -3.64  0.00027 ***
-hhtype[4] Couple family with children < 15 wo others           -8.52e-02   1.48e-02   -5.74  9.3e-09 ***
-hhtype[5] Couple family with children < 15 w other related     -1.59e-01   6.50e-02   -2.45  0.01416 *  
-hhtype[6] Couple family with children < 15 w other not related -1.15e-02   1.33e-01   -0.09  0.93124    
-hhtype[7] Couple family with depst wo others                    7.82e-02   2.17e-02    3.60  0.00032 ***
-hhtype[8] Couple family with depst w other related             -6.35e-02   1.21e-01   -0.52  0.60134    
-hhtype[9] Couple family with depst w other not related          2.64e-01   2.17e-01    1.22  0.22220    
-hhtype[10] Couple family with ndepchild wo others               2.57e-02   2.39e-02    1.08  0.28096    
-hhtype[11] Couple family with ndepchild w other related         4.87e-02   1.22e-01    0.40  0.68940    
-hhtype[12] Couple family with ndepchild w other not related    -2.85e-02   1.81e-01   -0.16  0.87479    
-hhtype[13] Lone parent with children < 15 wo others            -3.24e-01   3.37e-02   -9.61  < 2e-16 ***
-hhtype[14] Lone parent with children < 15 w other related      -1.23e-01   8.74e-02   -1.40  0.16054    
-hhtype[15] Lone parent with children < 15 w other not related  -2.18e-01   1.45e-01   -1.51  0.13232    
-hhtype[16] Lone parent with depst wo others                    -1.39e-01   4.42e-02   -3.15  0.00162 ** 
-hhtype[17] Lone parent with depst w other related               1.65e-01   1.85e-01    0.89  0.37309    
-hhtype[18] Lone parent with depst w other not related          -1.98e-01   2.24e-01   -0.88  0.37648    
-hhtype[19] Lone parent with ndepchild wo others                -2.80e-01   3.70e-02   -7.55  4.3e-14 ***
-hhtype[20] Lone parent with ndepchild w other related          -2.94e-01   1.29e-01   -2.28  0.02245 *  
-hhtype[21] Lone parent with ndepchild w other not related      -5.74e-01   1.78e-01   -3.22  0.00127 ** 
-hhtype[22] Other related family wo children < 15 or others     -1.40e-01   6.06e-02   -2.31  0.02064 *  
-hhtype[23] Other related family wo children < 15 w others      -1.93e-02   1.23e-01   -0.16  0.87535    
-hhtype[24] Lone person                                         -1.32e-01   1.87e-02   -7.07  1.5e-12 ***
-hhtype[25] Group household                                     -2.05e-01   4.00e-02   -5.13  2.9e-07 ***
-hhtype[26] Multi family household                              -1.18e-01   4.25e-02   -2.77  0.00565 ** 
-jbocct                                                          2.57e-03   6.42e-04    4.00  6.2e-05 ***
-wsfei                                                           7.41e-06   1.45e-07   51.07  < 2e-16 ***
+                                                                 Estimate Std. Error z value Pr(>|z|)    
+hgsex[2] Female                                                 0.0851605  0.0110651   7.696 1.40e-14 ***
+hgage                                                           0.0067726  0.0005090  13.306  < 2e-16 ***
+ancob3imm_anglo                                                -0.0359949  0.0220190  -1.635 0.102108    
+ancob3imm_others                                               -0.2070621  0.0165405 -12.518  < 2e-16 ***
+hhtype[2] Couple family wo children w other related            -0.1695758  0.0592595  -2.862 0.004215 ** 
+hhtype[3] Couple family wo children w other not related        -0.3719864  0.0906772  -4.102 4.09e-05 ***
+hhtype[4] Couple family with children < 15 wo others           -0.0612880  0.0148363  -4.131 3.61e-05 ***
+hhtype[5] Couple family with children < 15 w other related     -0.1749326  0.0651204  -2.686 0.007225 ** 
+hhtype[6] Couple family with children < 15 w other not related -0.0307318  0.1333288  -0.230 0.817706    
+hhtype[7] Couple family with depst wo others                    0.0571296  0.0217201   2.630 0.008532 ** 
+hhtype[8] Couple family with depst w other related             -0.1054672  0.1214861  -0.868 0.385316    
+hhtype[9] Couple family with depst w other not related          0.2349242  0.2152831   1.091 0.275170    
+hhtype[10] Couple family with ndepchild wo others              -0.0223106  0.0238388  -0.936 0.349326    
+hhtype[11] Couple family with ndepchild w other related        -0.0100965  0.1215193  -0.083 0.933784    
+hhtype[12] Couple family with ndepchild w other not related    -0.0641860  0.1812706  -0.354 0.723272    
+hhtype[13] Lone parent with children < 15 wo others            -0.3551976  0.0336480 -10.556  < 2e-16 ***
+hhtype[14] Lone parent with children < 15 w other related      -0.1762271  0.0873019  -2.019 0.043529 *  
+hhtype[15] Lone parent with children < 15 w other not related  -0.2839906  0.1442963  -1.968 0.049056 *  
+hhtype[16] Lone parent with depst wo others                    -0.1668800  0.0441212  -3.782 0.000155 ***
+hhtype[17] Lone parent with depst w other related               0.1206296  0.1846637   0.653 0.513602    
+hhtype[18] Lone parent with depst w other not related          -0.2043863  0.2223430  -0.919 0.357971    
+hhtype[19] Lone parent with ndepchild wo others                -0.3392438  0.0369698  -9.176  < 2e-16 ***
+hhtype[20] Lone parent with ndepchild w other related          -0.3200376  0.1289835  -2.481 0.013093 *  
+hhtype[21] Lone parent with ndepchild w other not related      -0.6180821  0.1776823  -3.479 0.000504 ***
+hhtype[22] Other related family wo children < 15 or others     -0.1789245  0.0606857  -2.948 0.003194 ** 
+hhtype[23] Other related family wo children < 15 w others      -0.0708315  0.1229164  -0.576 0.564441    
+hhtype[24] Lone person                                         -0.1493504  0.0186758  -7.997 1.27e-15 ***
+hhtype[25] Group household                                     -0.2492029  0.0399239  -6.242 4.32e-10 ***
+hhtype[26] Multi family household                              -0.1588287  0.0424590  -3.741 0.000183 ***
+jbocct                                                          0.0044985  0.0006419   7.008 2.42e-12 ***
+I(log(wsfei))                                                   0.0551543  0.0016895  32.645  < 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Threshold coefficients:
      Estimate Std. Error z value
-0|1   -3.8422     0.0414  -92.75
-1|2   -3.1671     0.0369  -85.94
-2|3   -2.4502     0.0342  -71.69
-3|4   -1.8178     0.0329  -55.21
-4|5   -1.3822     0.0324  -42.63
-5|6   -0.7237     0.0320  -22.60
-6|7   -0.1728     0.0319   -5.42
-7|8    0.7008     0.0320   21.92
-8|9    1.9005     0.0325   58.48
-9|10   2.8801     0.0335   86.05
+0|1  -3.61268    0.03804  -94.96
+1|2  -2.93769    0.03302  -88.96
+2|3  -2.22144    0.03004  -73.95
+3|4  -1.59029    0.02864  -55.52
+4|5  -1.15635    0.02810  -41.15
+5|6  -0.50184    0.02769  -18.12
+6|7   0.04390    0.02761    1.59
+7|8   0.90684    0.02777   32.65
+8|9   2.09001    0.02839   73.61
+9|10  3.06138    0.02947  103.87
 ```
 
-The model is nearly unidentifiable: very large eigenvalue.
-
-Let's try with wages_perc...
+```
+[1]     41.0 430675.2
+```
 
 ##### wages_perc
+
 
 ```
 formula: jbmspay ~ hgsex + hgage + ancob3 + hhtype + jbocct + wages_perc
 data:    xsub
 
  link  threshold nobs   logLik     AIC       niter max.grad cond.H 
- logit flexible  104631 -215129.67 430341.35 6(0)  5.57e-11 3.0e+06
+ logit flexible  104631 -215129.68 430341.35 6(0)  1.18e-10 3.0e+06
 
 Coefficients:
-                                                                Estimate Std. Error z value Pr(>|z|)    
-hgsex[2] Female                                                 0.137973   0.011180   12.34  < 2e-16 ***
-hgage                                                           0.005443   0.000511   10.66  < 2e-16 ***
-ancob3australians                                               0.028976   0.021986    1.32  0.18751    
-ancob3others                                                   -0.180012   0.025933   -6.94  3.9e-12 ***
-hhtype[2] Couple family wo children w other related            -0.170662   0.059266   -2.88  0.00398 ** 
-hhtype[3] Couple family wo children w other not related        -0.367968   0.090842   -4.05  5.1e-05 ***
-hhtype[4] Couple family with children < 15 wo others           -0.059128   0.014834   -3.99  6.7e-05 ***
-hhtype[5] Couple family with children < 15 w other related     -0.169550   0.064990   -2.61  0.00908 ** 
-hhtype[6] Couple family with children < 15 w other not related -0.030406   0.133499   -0.23  0.81983    
-hhtype[7] Couple family with depst wo others                    0.069042   0.021724    3.18  0.00148 ** 
-hhtype[8] Couple family with depst w other related             -0.088143   0.121632   -0.72  0.46865    
-hhtype[9] Couple family with depst w other not related          0.245796   0.217463    1.13  0.25835    
-hhtype[10] Couple family with ndepchild wo others              -0.005282   0.023845   -0.22  0.82469    
-hhtype[11] Couple family with ndepchild w other related        -0.004705   0.121768   -0.04  0.96918    
-hhtype[12] Couple family with ndepchild w other not related    -0.054125   0.181879   -0.30  0.76602    
-hhtype[13] Lone parent with children < 15 wo others            -0.342108   0.033694  -10.15  < 2e-16 ***
-hhtype[14] Lone parent with children < 15 w other related      -0.177304   0.087003   -2.04  0.04156 *  
-hhtype[15] Lone parent with children < 15 w other not related  -0.257434   0.144517   -1.78  0.07486 .  
-hhtype[16] Lone parent with depst wo others                    -0.160911   0.044142   -3.65  0.00027 ***
-hhtype[17] Lone parent with depst w other related               0.143234   0.185336    0.77  0.43962    
-hhtype[18] Lone parent with depst w other not related          -0.205578   0.222616   -0.92  0.35577    
-hhtype[19] Lone parent with ndepchild wo others                -0.325455   0.036963   -8.80  < 2e-16 ***
-hhtype[20] Lone parent with ndepchild w other related          -0.308814   0.128256   -2.41  0.01605 *  
-hhtype[21] Lone parent with ndepchild w other not related      -0.623601   0.177568   -3.51  0.00044 ***
-hhtype[22] Other related family wo children < 15 or others     -0.158887   0.060593   -2.62  0.00874 ** 
-hhtype[23] Other related family wo children < 15 w others      -0.048683   0.122994   -0.40  0.69224    
-hhtype[24] Lone person                                         -0.147855   0.018671   -7.92  2.4e-15 ***
-hhtype[25] Group household                                     -0.226682   0.039920   -5.68  1.4e-08 ***
-hhtype[26] Multi family household                              -0.151416   0.042472   -3.57  0.00036 ***
-jbocct                                                          0.002367   0.000642    3.69  0.00023 ***
-wages_perc                                                      0.732327   0.019604   37.36  < 2e-16 ***
+                                                                 Estimate Std. Error z value Pr(>|z|)    
+hgsex[2] Female                                                 0.1379738  0.0111797  12.341  < 2e-16 ***
+hgage                                                           0.0054431  0.0005106  10.661  < 2e-16 ***
+ancob3imm_anglo                                                -0.0289772  0.0219855  -1.318 0.187499    
+ancob3imm_others                                               -0.2089874  0.0165260 -12.646  < 2e-16 ***
+hhtype[2] Couple family wo children w other related            -0.1706619  0.0592658  -2.880 0.003982 ** 
+hhtype[3] Couple family wo children w other not related        -0.3679682  0.0908423  -4.051 5.11e-05 ***
+hhtype[4] Couple family with children < 15 wo others           -0.0591280  0.0148344  -3.986 6.72e-05 ***
+hhtype[5] Couple family with children < 15 w other related     -0.1695505  0.0649897  -2.609 0.009084 ** 
+hhtype[6] Couple family with children < 15 w other not related -0.0304065  0.1334992  -0.228 0.819829    
+hhtype[7] Couple family with depst wo others                    0.0690417  0.0217243   3.178 0.001483 ** 
+hhtype[8] Couple family with depst w other related             -0.0881445  0.1216324  -0.725 0.468649    
+hhtype[9] Couple family with depst w other not related          0.2457967  0.2174631   1.130 0.258353    
+hhtype[10] Couple family with ndepchild wo others              -0.0052773  0.0238450  -0.221 0.824847    
+hhtype[11] Couple family with ndepchild w other related        -0.0046855  0.1217694  -0.038 0.969306    
+hhtype[12] Couple family with ndepchild w other not related    -0.0541257  0.1818795  -0.298 0.766015    
+hhtype[13] Lone parent with children < 15 wo others            -0.3421087  0.0336941 -10.153  < 2e-16 ***
+hhtype[14] Lone parent with children < 15 w other related      -0.1773048  0.0870034  -2.038 0.041559 *  
+hhtype[15] Lone parent with children < 15 w other not related  -0.2574340  0.1445175  -1.781 0.074858 .  
+hhtype[16] Lone parent with depst wo others                    -0.1609108  0.0441419  -3.645 0.000267 ***
+hhtype[17] Lone parent with depst w other related               0.1432338  0.1853356   0.773 0.439620    
+hhtype[18] Lone parent with depst w other not related          -0.2055792  0.2226165  -0.923 0.355763    
+hhtype[19] Lone parent with ndepchild wo others                -0.3254549  0.0369635  -8.805  < 2e-16 ***
+hhtype[20] Lone parent with ndepchild w other related          -0.3088134  0.1282559  -2.408 0.016049 *  
+hhtype[21] Lone parent with ndepchild w other not related      -0.6236010  0.1775676  -3.512 0.000445 ***
+hhtype[22] Other related family wo children < 15 or others     -0.1588867  0.0605934  -2.622 0.008737 ** 
+hhtype[23] Other related family wo children < 15 w others      -0.0486832  0.1229944  -0.396 0.692241    
+hhtype[24] Lone person                                         -0.1478544  0.0186707  -7.919 2.39e-15 ***
+hhtype[25] Group household                                     -0.2266749  0.0399203  -5.678 1.36e-08 ***
+hhtype[26] Multi family household                              -0.1514163  0.0424725  -3.565 0.000364 ***
+jbocct                                                          0.0023665  0.0006421   3.686 0.000228 ***
+wages_perc                                                      0.7323273  0.0196039  37.356  < 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Threshold coefficients:
+     Estimate Std. Error  z value
+0|1  -3.80261    0.03573 -106.421
+1|2  -3.12790    0.03031 -103.185
+2|3  -2.41166    0.02701  -89.286
+3|4  -1.78010    0.02542  -70.030
+4|5  -1.34554    0.02478  -54.295
+5|6  -0.68985    0.02426  -28.430
+6|7  -0.14283    0.02411   -5.925
+7|8   0.72264    0.02423   29.825
+8|9   1.90884    0.02490   76.667
+9|10  2.88097    0.02612  110.315
+```
+
+```
+[1]     41.0 430341.4
+```
+
+The model fitted with the wager_perc variable is a better choice than that with the annula salary wsfei.
+
+
+
+```
+formula: jbmspay ~ hgsex + hgage + hhtype + ancob3 + jbocct:ancob3 + wages_perc:ancob3
+data:    xsub
+
+ link  threshold nobs   logLik     AIC       niter max.grad cond.H 
+ logit flexible  104631 -215088.59 430267.18 6(0)  2.28e-10 2.9e+06
+
+Coefficients:
+                                                                 Estimate Std. Error z value Pr(>|z|)    
+hgsex[2] Female                                                 0.1374287  0.0111834  12.289  < 2e-16 ***
+hgage                                                           0.0056836  0.0005123  11.094  < 2e-16 ***
+hhtype[2] Couple family wo children w other related            -0.1718562  0.0592544  -2.900 0.003728 ** 
+hhtype[3] Couple family wo children w other not related        -0.3599298  0.0909454  -3.958 7.57e-05 ***
+hhtype[4] Couple family with children < 15 wo others           -0.0586800  0.0148481  -3.952 7.75e-05 ***
+hhtype[5] Couple family with children < 15 w other related     -0.1653744  0.0649471  -2.546 0.010887 *  
+hhtype[6] Couple family with children < 15 w other not related -0.0262147  0.1334875  -0.196 0.844310    
+hhtype[7] Couple family with depst wo others                    0.0644348  0.0217296   2.965 0.003024 ** 
+hhtype[8] Couple family with depst w other related             -0.0694204  0.1217931  -0.570 0.568687    
+hhtype[9] Couple family with depst w other not related          0.2342601  0.2175096   1.077 0.281476    
+hhtype[10] Couple family with ndepchild wo others              -0.0089520  0.0238587  -0.375 0.707506    
+hhtype[11] Couple family with ndepchild w other related         0.0010357  0.1217996   0.009 0.993216    
+hhtype[12] Couple family with ndepchild w other not related    -0.0623153  0.1819430  -0.342 0.731975    
+hhtype[13] Lone parent with children < 15 wo others            -0.3462290  0.0336932 -10.276  < 2e-16 ***
+hhtype[14] Lone parent with children < 15 w other related      -0.1766664  0.0869747  -2.031 0.042231 *  
+hhtype[15] Lone parent with children < 15 w other not related  -0.2625559  0.1443684  -1.819 0.068965 .  
+hhtype[16] Lone parent with depst wo others                    -0.1655691  0.0441613  -3.749 0.000177 ***
+hhtype[17] Lone parent with depst w other related               0.1372057  0.1856176   0.739 0.459795    
+hhtype[18] Lone parent with depst w other not related          -0.2065069  0.2228131  -0.927 0.354022    
+hhtype[19] Lone parent with ndepchild wo others                -0.3277209  0.0369659  -8.865  < 2e-16 ***
+hhtype[20] Lone parent with ndepchild w other related          -0.3153308  0.1283232  -2.457 0.013998 *  
+hhtype[21] Lone parent with ndepchild w other not related      -0.6340910  0.1773472  -3.575 0.000350 ***
+hhtype[22] Other related family wo children < 15 or others     -0.1570918  0.0605886  -2.593 0.009521 ** 
+hhtype[23] Other related family wo children < 15 w others      -0.0434922  0.1230421  -0.353 0.723733    
+hhtype[24] Lone person                                         -0.1479150  0.0186765  -7.920 2.38e-15 ***
+hhtype[25] Group household                                     -0.2272114  0.0399276  -5.691 1.27e-08 ***
+hhtype[26] Multi family household                              -0.1531646  0.0424911  -3.605 0.000313 ***
+ancob3imm_anglo                                                -0.1642718  0.0484289  -3.392 0.000694 ***
+ancob3imm_others                                               -0.4506699  0.0357732 -12.598  < 2e-16 ***
+ancob3australians:jbocct                                        0.0004718  0.0007049   0.669 0.503289    
+ancob3imm_anglo:jbocct                                          0.0051878  0.0018887   2.747 0.006020 ** 
+ancob3imm_others:jbocct                                         0.0116107  0.0015385   7.547 4.46e-14 ***
+ancob3australians:wages_perc                                    0.6860193  0.0220088  31.170  < 2e-16 ***
+ancob3imm_anglo:wages_perc                                      0.8438577  0.0696686  12.112  < 2e-16 ***
+ancob3imm_others:wages_perc                                     0.9463315  0.0525086  18.022  < 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Threshold coefficients:
      Estimate Std. Error z value
-0|1   -3.7736     0.0420  -89.88
-1|2   -3.0989     0.0375  -82.68
-2|3   -2.3827     0.0349  -68.35
-3|4   -1.7511     0.0336  -52.05
-4|5   -1.3166     0.0332  -39.70
-5|6   -0.6609     0.0328  -20.16
-6|7   -0.1139     0.0327   -3.48
-7|8    0.7516     0.0328   22.93
-8|9    1.9378     0.0333   58.22
-9|10   2.9100     0.0342   85.08
+0|1  -3.83725    0.03609 -106.32
+1|2  -3.16247    0.03074 -102.89
+2|3  -2.44612    0.02748  -89.00
+3|4  -1.81438    0.02592  -70.01
+4|5  -1.37966    0.02529  -54.55
+5|6  -0.72360    0.02477  -29.21
+6|7  -0.17623    0.02461   -7.16
+7|8   0.68970    0.02472   27.90
+8|9   1.87636    0.02537   73.97
+9|10  2.84876    0.02655  107.28
 ```
 
-Very good fit.
+```
+[1]     45.0 430267.2
+```
+
+AIC improved.
+
+
+
+##### Smoothing satisfaction pay
+
+We now create three variables: the wage (or wage_perc) for Australians, English-speaking migrants and other migrants.
+We fit a generalized additive model with the effect of these three variable smoothed.
+
+
+```
+Loading required package: stats4
+Loading required package: splines
+
+Attaching package: 'VGAM'
+
+The following objects are masked from 'package:ordinal':
+
+    dgumbel, dlgamma, pgumbel, plgamma, qgumbel, rgumbel, wine
+```
+
+![](HILDA_files/figure-html/vgam1-1.png) 
+
+The confidence intervals are too big, the wage is not the right variable to use.
+We can now use the percentiles of wage in each job code.
+
+![](HILDA_files/figure-html/vgam2-1.png) 
+
+The results are interesting: [interpretation here].
+Let's now study the satisfaction for pay as function of yearssince studying:
+
+![](HILDA_files/figure-html/vgam3-1.png) ![](HILDA_files/figure-html/vgam3-2.png) 
+
+There are no differences between Australians, English-speaking migrant and other migrants in the satisfaction for pay as a function of the time since last studying.
+
+
+
 
 #### Satisfaction for job security:
 
@@ -686,131 +1074,150 @@ Very good fit.
 
 
 ```
-Warning: (2) Model is nearly unidentifiable: very large eigenvalue
- - Rescale variables? 
-In addition: Absolute and relative convergence criteria were met
-```
-
-```
-formula: jbmssec ~ hgsex + hgage + ancob3 + hhtype + jbocct + wsfei
+formula: jbmssec ~ hgsex + hgage + ancob3 + hhtype + jbocct + I(log(wsfei))
 data:    xsub
 
  link  threshold nobs   logLik     AIC       niter max.grad cond.H 
- logit flexible  104631 -197442.21 394966.43 6(0)  1.43e-07 6.8e+12
+ logit flexible  104631 -197313.79 394709.58 6(0)  3.15e-10 3.6e+06
 
 Coefficients:
-                                                                Estimate Std. Error z value Pr(>|z|)    
-hgsex[2] Female                                                 2.42e-01   1.14e-02   21.31  < 2e-16 ***
-hgage                                                          -9.43e-03   5.11e-04  -18.45  < 2e-16 ***
-ancob3australians                                               1.64e-01   2.24e-02    7.33  2.4e-13 ***
-ancob3others                                                   -1.17e-01   2.62e-02   -4.44  8.9e-06 ***
-hhtype[2] Couple family wo children w other related            -6.36e-02   5.87e-02   -1.08  0.27796    
-hhtype[3] Couple family wo children w other not related        -2.03e-01   9.07e-02   -2.24  0.02520 *  
-hhtype[4] Couple family with children < 15 wo others           -1.90e-01   1.50e-02  -12.63  < 2e-16 ***
-hhtype[5] Couple family with children < 15 w other related     -3.28e-01   6.50e-02   -5.04  4.6e-07 ***
-hhtype[6] Couple family with children < 15 w other not related -3.69e-01   1.34e-01   -2.76  0.00583 ** 
-hhtype[7] Couple family with depst wo others                   -1.46e-01   2.17e-02   -6.72  1.8e-11 ***
-hhtype[8] Couple family with depst w other related             -1.96e-01   1.23e-01   -1.59  0.11175    
-hhtype[9] Couple family with depst w other not related         -6.29e-02   2.27e-01   -0.28  0.78209    
-hhtype[10] Couple family with ndepchild wo others              -6.13e-02   2.40e-02   -2.55  0.01065 *  
-hhtype[11] Couple family with ndepchild w other related        -3.04e-01   1.21e-01   -2.52  0.01170 *  
-hhtype[12] Couple family with ndepchild w other not related    -1.26e-01   1.86e-01   -0.68  0.49873    
-hhtype[13] Lone parent with children < 15 wo others            -3.75e-01   3.37e-02  -11.14  < 2e-16 ***
-hhtype[14] Lone parent with children < 15 w other related      -7.53e-02   8.64e-02   -0.87  0.38333    
-hhtype[15] Lone parent with children < 15 w other not related  -4.36e-01   1.46e-01   -2.98  0.00284 ** 
-hhtype[16] Lone parent with depst wo others                    -2.21e-01   4.42e-02   -4.99  6.0e-07 ***
-hhtype[17] Lone parent with depst w other related              -6.30e-02   1.89e-01   -0.33  0.73830    
-hhtype[18] Lone parent with depst w other not related          -1.80e-01   2.40e-01   -0.75  0.45343    
-hhtype[19] Lone parent with ndepchild wo others                -3.23e-01   3.74e-02   -8.64  < 2e-16 ***
-hhtype[20] Lone parent with ndepchild w other related          -4.33e-01   1.27e-01   -3.42  0.00062 ***
-hhtype[21] Lone parent with ndepchild w other not related      -2.98e-01   1.88e-01   -1.59  0.11273    
-hhtype[22] Other related family wo children < 15 or others     -2.65e-01   6.15e-02   -4.31  1.7e-05 ***
-hhtype[23] Other related family wo children < 15 w others      -4.84e-02   1.23e-01   -0.39  0.69293    
-hhtype[24] Lone person                                         -2.48e-01   1.89e-02  -13.15  < 2e-16 ***
-hhtype[25] Group household                                     -2.45e-01   4.08e-02   -6.00  2.0e-09 ***
-hhtype[26] Multi family household                              -1.09e-01   4.24e-02   -2.58  0.00998 ** 
-jbocct                                                          1.64e-02   6.47e-04   25.28  < 2e-16 ***
-wsfei                                                           2.03e-06   1.39e-07   14.58  < 2e-16 ***
+                                                                 Estimate Std. Error z value Pr(>|z|)    
+hgsex[2] Female                                                 0.2140327  0.0111410  19.211  < 2e-16 ***
+hgage                                                          -0.0086289  0.0005073 -17.011  < 2e-16 ***
+ancob3imm_anglo                                                -0.1545381  0.0223313  -6.920 4.51e-12 ***
+ancob3imm_others                                               -0.2819524  0.0165816 -17.004  < 2e-16 ***
+hhtype[2] Couple family wo children w other related            -0.0743783  0.0586299  -1.269 0.204582    
+hhtype[3] Couple family wo children w other not related        -0.2232832  0.0907647  -2.460 0.013893 *  
+hhtype[4] Couple family with children < 15 wo others           -0.1797588  0.0150318 -11.959  < 2e-16 ***
+hhtype[5] Couple family with children < 15 w other related     -0.3288044  0.0650467  -5.055 4.31e-07 ***
+hhtype[6] Couple family with children < 15 w other not related -0.3746629  0.1338568  -2.799 0.005126 ** 
+hhtype[7] Couple family with depst wo others                   -0.1439088  0.0216912  -6.634 3.26e-11 ***
+hhtype[8] Couple family with depst w other related             -0.1924559  0.1227592  -1.568 0.116939    
+hhtype[9] Couple family with depst w other not related         -0.0393052  0.2281986  -0.172 0.863248    
+hhtype[10] Couple family with ndepchild wo others              -0.0734044  0.0239780  -3.061 0.002204 ** 
+hhtype[11] Couple family with ndepchild w other related        -0.3079203  0.1210200  -2.544 0.010947 *  
+hhtype[12] Couple family with ndepchild w other not related    -0.1317872  0.1864654  -0.707 0.479713    
+hhtype[13] Lone parent with children < 15 wo others            -0.3735004  0.0336617 -11.096  < 2e-16 ***
+hhtype[14] Lone parent with children < 15 w other related      -0.0798819  0.0863212  -0.925 0.354756    
+hhtype[15] Lone parent with children < 15 w other not related  -0.4405952  0.1458851  -3.020 0.002526 ** 
+hhtype[16] Lone parent with depst wo others                    -0.2206364  0.0442382  -4.987 6.12e-07 ***
+hhtype[17] Lone parent with depst w other related              -0.0588008  0.1887082  -0.312 0.755347    
+hhtype[18] Lone parent with depst w other not related          -0.1683906  0.2392336  -0.704 0.481510    
+hhtype[19] Lone parent with ndepchild wo others                -0.3414921  0.0373385  -9.146  < 2e-16 ***
+hhtype[20] Lone parent with ndepchild w other related          -0.4494785  0.1268329  -3.544 0.000394 ***
+hhtype[21] Lone parent with ndepchild w other not related      -0.2887513  0.1886074  -1.531 0.125778    
+hhtype[22] Other related family wo children < 15 or others     -0.2729994  0.0614337  -4.444 8.84e-06 ***
+hhtype[23] Other related family wo children < 15 w others      -0.0661791  0.1225371  -0.540 0.589146    
+hhtype[24] Lone person                                         -0.2581490  0.0188975 -13.660  < 2e-16 ***
+hhtype[25] Group household                                     -0.2596753  0.0407912  -6.366 1.94e-10 ***
+hhtype[26] Multi family household                              -0.1167948  0.0423905  -2.755 0.005865 ** 
+jbocct                                                          0.0173762  0.0006479  26.818  < 2e-16 ***
+I(log(wsfei))                                                   0.0367898  0.0016881  21.793  < 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Threshold coefficients:
-     Estimate Std. Error z value
-0|1   -4.7080     0.0448 -105.09
-1|2   -4.0807     0.0393 -103.71
-2|3   -3.4370     0.0360  -95.40
-3|4   -2.9338     0.0345  -85.11
-4|5   -2.5673     0.0337  -76.14
-5|6   -1.9120     0.0329  -58.13
-6|7   -1.5223     0.0326  -46.69
-7|8   -0.9012     0.0324  -27.86
-8|9    0.0325     0.0323    1.01
-9|10   1.0041     0.0324   30.98
+     Estimate Std. Error  z value
+0|1  -4.59287    0.04154 -110.556
+1|2  -3.96553    0.03560 -111.406
+2|3  -3.32156    0.03190 -104.134
+3|4  -2.81796    0.03014  -93.493
+4|5  -2.45102    0.02929  -83.688
+5|6  -1.79473    0.02835  -63.295
+6|7  -1.40419    0.02804  -50.074
+7|8  -0.78165    0.02778  -28.138
+8|9   0.15431    0.02771    5.568
+9|10  1.12703    0.02792   40.361
 ```
 
-Again, the model is nearly unidentifiable: very large eigenvalue.
-
 ##### wages_perc
+
 
 ```
 formula: jbmssec ~ hgsex + hgage + ancob3 + hhtype + jbocct + wages_perc
 data:    xsub
 
  link  threshold nobs   logLik     AIC       niter max.grad cond.H 
- logit flexible  104631 -197369.78 394821.56 6(0)  5.10e-11 3.4e+06
+ logit flexible  104631 -197369.80 394821.60 6(0)  1.57e-10 3.4e+06
 
 Coefficients:
                                                                 Estimate Std. Error z value Pr(>|z|)    
-hgsex[2] Female                                                 0.239798   0.011261   21.29  < 2e-16 ***
-hgage                                                          -0.009311   0.000509  -18.29  < 2e-16 ***
-ancob3australians                                               0.150504   0.022333    6.74  1.6e-11 ***
-ancob3others                                                   -0.132030   0.026227   -5.03  4.8e-07 ***
-hhtype[2] Couple family wo children w other related            -0.075667   0.058670   -1.29  0.19716    
-hhtype[3] Couple family wo children w other not related        -0.216828   0.090789   -2.39  0.01693 *  
-hhtype[4] Couple family with children < 15 wo others           -0.179825   0.015033  -11.96  < 2e-16 ***
-hhtype[5] Couple family with children < 15 w other related     -0.329456   0.064983   -5.07  4.0e-07 ***
-hhtype[6] Couple family with children < 15 w other not related -0.372642   0.133870   -2.78  0.00538 ** 
-hhtype[7] Couple family with depst wo others                   -0.140137   0.021704   -6.46  1.1e-10 ***
-hhtype[8] Couple family with depst w other related             -0.188972   0.123087   -1.54  0.12472    
-hhtype[9] Couple family with depst w other not related         -0.039964   0.227990   -0.18  0.86085    
-hhtype[10] Couple family with ndepchild wo others              -0.064034   0.023988   -2.67  0.00760 ** 
-hhtype[11] Couple family with ndepchild w other related        -0.306181   0.120782   -2.53  0.01124 *  
-hhtype[12] Couple family with ndepchild w other not related    -0.128587   0.185989   -0.69  0.48934    
-hhtype[13] Lone parent with children < 15 wo others            -0.371324   0.033665  -11.03  < 2e-16 ***
-hhtype[14] Lone parent with children < 15 w other related      -0.081309   0.086327   -0.94  0.34626    
-hhtype[15] Lone parent with children < 15 w other not related  -0.434187   0.146057   -2.97  0.00295 ** 
-hhtype[16] Lone parent with depst wo others                    -0.218848   0.044245   -4.95  7.6e-07 ***
-hhtype[17] Lone parent with depst w other related              -0.041690   0.188846   -0.22  0.82528    
-hhtype[18] Lone parent with depst w other not related          -0.181501   0.239309   -0.76  0.44819    
-hhtype[19] Lone parent with ndepchild wo others                -0.332161   0.037339   -8.90  < 2e-16 ***
-hhtype[20] Lone parent with ndepchild w other related          -0.442761   0.126488   -3.50  0.00046 ***
-hhtype[21] Lone parent with ndepchild w other not related      -0.300404   0.188377   -1.59  0.11078    
-hhtype[22] Other related family wo children < 15 or others     -0.265946   0.061431   -4.33  1.5e-05 ***
-hhtype[23] Other related family wo children < 15 w others      -0.051460   0.122488   -0.42  0.67439    
-hhtype[24] Lone person                                         -0.254690   0.018897  -13.48  < 2e-16 ***
-hhtype[25] Group household                                     -0.245014   0.040809   -6.00  1.9e-09 ***
-hhtype[26] Multi family household                              -0.114629   0.042409   -2.70  0.00687 ** 
-jbocct                                                          0.016123   0.000647   24.92  < 2e-16 ***
-wages_perc                                                      0.373183   0.019633   19.01  < 2e-16 ***
+hgsex[2] Female                                                 0.239796   0.011261  21.294  < 2e-16 ***
+hgage                                                          -0.009311   0.000509 -18.292  < 2e-16 ***
+ancob3imm_anglo                                                -0.150504   0.022333  -6.739 1.59e-11 ***
+ancob3imm_others                                               -0.282533   0.016578 -17.042  < 2e-16 ***
+hhtype[2] Couple family wo children w other related            -0.075666   0.058670  -1.290 0.197159    
+hhtype[3] Couple family wo children w other not related        -0.216827   0.090789  -2.388 0.016929 *  
+hhtype[4] Couple family with children < 15 wo others           -0.179825   0.015033 -11.962  < 2e-16 ***
+hhtype[5] Couple family with children < 15 w other related     -0.329457   0.064983  -5.070 3.98e-07 ***
+hhtype[6] Couple family with children < 15 w other not related -0.372643   0.133870  -2.784 0.005376 ** 
+hhtype[7] Couple family with depst wo others                   -0.140138   0.021704  -6.457 1.07e-10 ***
+hhtype[8] Couple family with depst w other related             -0.188974   0.123087  -1.535 0.124711    
+hhtype[9] Couple family with depst w other not related         -0.039966   0.227990  -0.175 0.860846    
+hhtype[10] Couple family with ndepchild wo others              -0.064034   0.023988  -2.669 0.007600 ** 
+hhtype[11] Couple family with ndepchild w other related        -0.306163   0.120783  -2.535 0.011251 *  
+hhtype[12] Couple family with ndepchild w other not related    -0.128587   0.185989  -0.691 0.489333    
+hhtype[13] Lone parent with children < 15 wo others            -0.371325   0.033665 -11.030  < 2e-16 ***
+hhtype[14] Lone parent with children < 15 w other related      -0.081310   0.086327  -0.942 0.346252    
+hhtype[15] Lone parent with children < 15 w other not related  -0.434188   0.146058  -2.973 0.002952 ** 
+hhtype[16] Lone parent with depst wo others                    -0.218849   0.044245  -4.946 7.57e-07 ***
+hhtype[17] Lone parent with depst w other related              -0.041691   0.188846  -0.221 0.825272    
+hhtype[18] Lone parent with depst w other not related          -0.181503   0.239309  -0.758 0.448186    
+hhtype[19] Lone parent with ndepchild wo others                -0.332161   0.037339  -8.896  < 2e-16 ***
+hhtype[20] Lone parent with ndepchild w other related          -0.442760   0.126488  -3.500 0.000465 ***
+hhtype[21] Lone parent with ndepchild w other not related      -0.300405   0.188377  -1.595 0.110779    
+hhtype[22] Other related family wo children < 15 or others     -0.265946   0.061431  -4.329 1.50e-05 ***
+hhtype[23] Other related family wo children < 15 w others      -0.051460   0.122488  -0.420 0.674397    
+hhtype[24] Lone person                                         -0.254690   0.018897 -13.478  < 2e-16 ***
+hhtype[25] Group household                                     -0.245005   0.040809  -6.004 1.93e-09 ***
+hhtype[26] Multi family household                              -0.114629   0.042409  -2.703 0.006872 ** 
+jbocct                                                          0.016123   0.000647  24.918  < 2e-16 ***
+wages_perc                                                      0.373165   0.019634  19.007  < 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Threshold coefficients:
-     Estimate Std. Error z value
-0|1   -4.6180     0.0453 -101.88
-1|2   -3.9907     0.0399  -99.90
-2|3   -3.3467     0.0367  -91.23
-3|4   -2.8432     0.0352  -80.86
-4|5   -2.4763     0.0344  -71.92
-5|6   -1.8204     0.0336  -54.12
-6|7   -1.4301     0.0334  -42.86
-7|8   -0.8083     0.0331  -24.39
-8|9    0.1264     0.0331    3.82
-9|10   1.0983     0.0332   33.04
+     Estimate Std. Error  z value
+0|1  -4.76854    0.03949 -120.762
+1|2  -4.14117    0.03317 -124.849
+2|3  -3.49718    0.02916 -119.939
+3|4  -2.99367    0.02721 -110.008
+4|5  -2.62683    0.02625 -100.063
+5|6  -1.97087    0.02517  -78.304
+6|7  -1.58065    0.02479  -63.772
+7|8  -0.95882    0.02443  -39.244
+8|9  -0.02413    0.02427   -0.994
+9|10  0.94780    0.02446   38.745
 ```
 
 No problems with this fit. wages_perc works better than wsfei to explain job satisfaction.
 
+
+##### Smoothing satisfaction job security
+
+We now create three variables: the wage (or wage_perc) for Australians, English-speaking migrants and other migrants.
+We fit a generalized additive model with the effect of these three variable smoothed.
+
+![](HILDA_files/figure-html/vgam4-1.png) 
+
+The confidence intervals are too big, the wage is not the right variable to use.
+We can now use the percentiles of wage in each job code.
+
+
+```
+null device 
+          1 
+```
+
+The results are interesting: [interpretation here].
+Let's now study the satisfaction for pay as function of yearssince studying:
+
+![](HILDA_files/figure-html/vgam6-1.png) ![](HILDA_files/figure-html/vgam6-2.png) 
+
+
+
+## Differences
+TODO
 
 
 
