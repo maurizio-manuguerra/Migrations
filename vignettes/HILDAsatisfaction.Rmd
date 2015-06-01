@@ -1,0 +1,253 @@
+
+## Job satisfaction
+
+Guardando alla tua domanda di OSP e cose che potrebbero essere divertenti, la variabile  latente per eccellenza e' la Job satisfaction. Tra quella per i soldi e per sicurezza (jbmssec) mi sembra ci sia piu' variabilita' per Job satisfaction about pay (jbmspay) e potremmo vedere:
+ 
+1. dall'inizio HILDA, quali sono i lavori dove chi lavora e' piu' felice? [jbmo62]
+2. ci sono settori che sono sistematicamente over-paid (qui dovresti vedere in primis mining e finanza. Anche il settore pubblico non e' male)
+3. sono piu' felici uomi e donne? [sex]
+4. immigrati o nativi? [ancob3]
+5. giovani o vecchi? (possibile scala: 25-29; 30-39; 40-49; 50-59; 60+) [hgage + I(hgage^2)]
+6. laureati o no? [edcoq --> ...]
+7. lavoratori fedeli al'employer o switchers? (tenure: jbocct) 
+8. in che stato? (hhstate)
+9. e in che tipo di famiglia? (hhtype)
+ 
+detto questo, mi sembra che il funzionale che tu stai usando e' legato al tempo: puo' essere usato anche su intensita', tipo prestigio (jbmoccs): il prestigio ha molte categorie ma e' stato surveyed solo in wave 5. Il che vuol dire mappare le occupation/Prestige scale da wave 5 e 'spararla' alle occupations di tutte le rimanenti waves.
+
+#### Satisfaction for job pay
+
+```{r subset, eval=F, include=T, echo=F, comment=NA, cache=F}
+xsub=x[,c("xwaveid","hgsex","jbmspay","jbmssec","jbmo62","ancob3","hgage","ehtse","edcoq","jbocct","hhstate","hhtype","wsfei","wages_perc", "ehtse_au","ehtse_anglo","ehtse_others")]
+xsub <- xsub[substr(as.character(xsub$jbmspay),1,1)!="-" & substr(as.character(xsub$jbmssec),1,1)!="-",]
+xsub <- xsub[substr(xsub$hhstate,1,2)!="[-",]
+xsub=droplevels(xsub)
+```
+
+Comparison of the effects on satisfation by salary vs wages_perc.
+
+##### Salary:
+```{r satisfaction_job_pay_salary, eval=F, include=T, echo=F, comment=NA, cache=F}
+fit <- clm(jbmspay ~ hgsex + hgage + ancob3+ hhtype+ jbocct + I(log(wsfei)), data=xsub)
+summary(fit)
+extractAIC(fit)
+```
+
+##### wages_perc
+
+```{r satisfaction_job_pay_perc, eval=F, include=T, echo=F, comment=NA, cache=F}
+fitp <- clm(jbmspay ~ hgsex + hgage + ancob3+ hhtype+ jbocct + wages_perc, data=xsub)
+summary(fitp)
+extractAIC(fitp)
+#fit <- clm(jbmspay ~ hgsex + jbmo62 + ancob3 + hgage + edcoq + jbocct + hhstate + hhtype + wages_perc, data=xsub)
+#summary(fit)
+#fitm <- clmm(jbmspay ~ hgsex + jbmo62 + ancob3 + hgage + edcoq + jbocct + hhstate + hhtype + wages_perc + (1|xwaveid), data=xsub)
+```
+
+The model fitted with the wager_perc variable is a better choice than that with the annula salary wsfei.
+
+
+```{r satisfaction_job_pay_perc_interaction, eval=F, include=T, echo=F, comment=NA, cache=F}
+fitp2 <- clm(jbmspay ~ hgsex + hgage +  hhtype+ ancob3 + jbocct:ancob3 + wages_perc:ancob3, data=xsub)
+summary(fitp2)
+extractAIC(fitp2)
+```
+
+AIC improved.
+
+```{r satisfaction_job_pay_perc_interaction_rnd, eval=F, include=T, echo=F, comment=NA, cache=F}
+fitp2rnd <- clmm(jbmspay ~ hgsex + hgage +  hhtype+ ancob3 + jbocct:ancob3 + wages_perc:ancob3 + (1|xwaveid), data=xsub)
+summary(fitp2rnd)
+extractAIC(fitp2rnd)
+```
+
+##### Smoothing satisfaction pay
+
+```{r libraries-detach-attach, echo=F, cache=F}
+detach("package:mgcv")
+library(VGAM)
+```
+
+We now create three variables: the wage (or wage_perc) for Australians, English-speaking migrants and other migrants.
+We fit a generalized additive model with the effect of these three variable smoothed.
+
+```{r vgam1, eval=F, include=T, echo=F, comment=NA}
+#fitgam0 <- vgam(jbmspay ~ hgsex + hgage + ancob3+ hhtype+ jbocct + s(wages_perc), data=xsub, family=propodds)
+#plotvgam(fitgam0, rugplot=F)
+
+##wage
+xsub$w_au = xsub$w_anglo = xsub$w_others = 0
+xsub$w_au[xsub$ancob3=="australians"] = xsub$wsfei[xsub$ancob3=="australians"]
+xsub$w_anglo[xsub$ancob3=="imm_anglo"] = xsub$wsfei[xsub$ancob3=="imm_anglo"]
+xsub$w_others[xsub$ancob3=="imm_others"] = xsub$wsfei[xsub$ancob3=="imm_others"]
+fitgam_wage <- vgam(jbmspay ~ hgsex + hgage + hhtype+ jbocct + s(w_au) + s(w_anglo) + s(w_others), data=xsub, family=propodds)
+plotvgam(fitgam_wage, se=T, rugplot=F, xlab="wage percentiles", ylab="effect on satisfaction", which.term=c("s(w_au)"),control=plotvgam.control(ylim=c(-.2,.4), lcol="blue", scol="blue"))
+plotvgam(fitgam_wage, se=T, rugplot=F, which.term=c("s(w_anglo)"),control=plotvgam.control(add.arg=T, lcol="red", scol="red"))
+plotvgam(fitgam_wage, se=T, rugplot=F, which.term=c("s(w_others)"),control=plotvgam.control(add.arg=T, lcol="black", scol="black"))
+legend("bottomright",c("Australians", "English-speaking migrants", "Other migrants") , col=c("blue","red","black"), lty=c(1,1,1) )
+```
+
+The confidence intervals are too big, the wage is not the right variable to use.
+We can now use the percentiles of wage in each job code.
+
+```{r vgam2, eval=F, include=T, echo=F, comment=NA}
+##wage_perc
+xsub$wp_au = xsub$wp_anglo = xsub$wp_others = 0
+xsub$wp_au[xsub$ancob3=="australians"] = xsub$wages_perc[xsub$ancob3=="australians"]
+xsub$wp_anglo[xsub$ancob3=="imm_anglo"] = xsub$wages_perc[xsub$ancob3=="imm_anglo"]
+xsub$wp_others[xsub$ancob3=="imm_others"] = xsub$wages_perc[xsub$ancob3=="imm_others"]
+fitgam <- vgam(jbmspay ~ hgsex + hgage + hhtype+ jbocct + s(wp_au) + s(wp_anglo) + s(wp_others), data=xsub, family=propodds)
+plotvgam(fitgam, rugplot=F, se=T, xlab="wage percentiles", ylab="effect on satisfaction", which.term=c("s(wp_au)"),control=plotvgam.control(ylim=c(-.3,.5), lcol="blue", scol="blue"))
+plotvgam(fitgam, rugplot=F, se=T, which.term=c("s(wp_anglo)"),control=plotvgam.control(add.arg=T, lcol="red", scol="red"))
+plotvgam(fitgam, rugplot=F, se=T, which.term=c("s(wp_others)"),control=plotvgam.control(add.arg=T, lcol="black", scol="black"))
+legend("bottomright",c("Australians", "English-speaking migrants", "Other migrants") , col=c("blue","red","black"), lty=c(1,1,1) )
+```
+
+The results are interesting: [interpretation here].
+Let's now study the satisfaction for pay as function of yearssince studying:
+
+```{r vgam3, eval=F, include=T, echo=F, comment=NA}
+fitgam <- vgam(jbmspay ~ hgsex + hgage + hhtype+ jbocct + ancob3 + s(wages_perc) + s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others), data=xsub, family=propodds)
+#Wages_perc
+plotvgam(fitgam, rugplot=F, se=T, xlab="wage percentiles", ylab="effect on satisfaction", which.term=c("s(wages_perc)"),control=plotvgam.control(ylim=c(-.3,1), lcol="blue", scol="black"))
+#Years since studying
+plotvgam(fitgam, rugplot=F, se=F, xlab="Years since studying", ylab="effect on satisfaction", which.term=c("s(ehtse_au)"),control=plotvgam.control(ylim=c(-1,1), lcol="blue", scol="blue"))
+plotvgam(fitgam, rugplot=F, se=F, which.term=c("s(ehtse_anglo)"),control=plotvgam.control(add.arg=T, lcol="red", scol="red"))
+plotvgam(fitgam, rugplot=F, se=F, which.term=c("s(ehtse_others)"),control=plotvgam.control(add.arg=T, lcol="black", scol="black"))
+legend("bottomright",c("Australians", "English-speaking migrants", "Other migrants") , col=c("blue","red","black"), lty=c(1,1,1) )
+```
+
+There are no differences between Australians, English-speaking migrant and other migrants in the satisfaction for pay as a function of the time since last studying.
+
+
+
+
+#### Satisfaction for job security:
+
+##### Salary:
+
+```{r satisfaction_job_security_salary, eval=F, include=T, echo=F, comment=NA, cache=F}
+fit <- clm(jbmssec ~ hgsex + hgage + ancob3+ hhtype+ jbocct + I(log(wsfei)), data=xsub)
+summary(fit)
+#fit <- clm(jbmssec ~ hgsex + hgage + ancob3+ hhtype+ jbocct + wages_perc + hhstate, data=xsub)
+#summary(fit)
+#Model is nearly unidentifiable
+#fit <- clm(jbmssec ~ hgsex + hgage + ancob3+ hhtype+ jbocct+ edcoq + hhstate, data=xsub)
+```
+
+##### wages_perc
+
+```{r satisfaction_job_security_perc, eval=F, include=T, echo=F, comment=NA, cache=F}
+fit <- clm(jbmssec ~ hgsex + hgage + ancob3+ hhtype+ jbocct + wages_perc, data=xsub)
+summary(fit)
+```
+
+No problems with this fit. wages_perc works better than wsfei to explain job satisfaction.
+
+
+##### Smoothing satisfaction job security
+
+We now create three variables: the wage (or wage_perc) for Australians, English-speaking migrants and other migrants.
+We fit a generalized additive model with the effect of these three variable smoothed.
+
+```{r vgam4, eval=F, include=T, echo=F, comment=NA}
+library(VGAM)
+#fitgam0 <- vgam(jbmssec ~ hgsex + hgage + ancob3+ hhtype+ jbocct + s(wages_perc), data=xsub, family=propodds)
+#plotvgam(fitgam0, rugplot=F)
+
+##wage
+fitgam_wage <- vgam(jbmssec ~ hgsex + hgage + hhtype+ jbocct + s(w_au) + s(w_anglo) + s(w_others), data=xsub, family=propodds)
+plotvgam(fitgam_wage, se=T, rugplot=F, xlab="wage percentiles", ylab="effect on satisfaction", which.term=c("s(w_au)"),control=plotvgam.control(ylim=c(-.2,.4), lcol="blue", scol="blue"))
+plotvgam(fitgam_wage, se=T, rugplot=F, which.term=c("s(w_anglo)"),control=plotvgam.control(add.arg=T, lcol="red", scol="red"))
+plotvgam(fitgam_wage, se=T, rugplot=F, which.term=c("s(w_others)"),control=plotvgam.control(add.arg=T, lcol="black", scol="black"))
+legend("bottomright",c("Australians", "English-speaking migrants", "Other migrants") , col=c("blue","red","black"), lty=c(1,1,1) )
+```
+
+The confidence intervals are too big, the wage is not the right variable to use.
+We can now use the percentiles of wage in each job code.
+
+```{r vgam5, eval=F, include=T, echo=F, comment=NA}
+##wage_perc
+fitgam <- vgam(jbmssec ~ hgsex + hgage + hhtype+ jbocct + s(wp_au) + s(wp_anglo) + s(wp_others), data=xsub, family=propodds)
+dev.off()
+plotvgam(fitgam, rugplot=F, se=T, xlab="wage percentiles", ylab="effect on satisfaction", which.term=c("s(wp_au)"),control=plotvgam.control(ylim=c(-.3,.5), lcol="blue", scol="blue"))
+plotvgam(fitgam, rugplot=F, se=T, which.term=c("s(wp_anglo)"),control=plotvgam.control(add.arg=T, lcol="red", scol="red"))
+plotvgam(fitgam, rugplot=F, se=T, which.term=c("s(wp_others)"),control=plotvgam.control(add.arg=T, lcol="black", scol="black"))
+legend("bottomright",c("Australians", "English-speaking migrants", "Other migrants") , col=c("blue","red","black"), lty=c(1,1,1) )
+```
+
+The results are interesting: [interpretation here].
+Let's now study the satisfaction for pay as function of yearssince studying:
+
+```{r vgam6, eval=F, include=T, echo=F, comment=NA}
+fitgam <- vgam(jbmssec ~ hgsex + hgage + hhtype+ jbocct + s(wages_perc) + s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others), data=xsub, family=propodds)
+#Wages_perc
+plotvgam(fitgam, rugplot=F, se=T, xlab="wage percentiles", ylab="effect on satisfaction", which.term=c("s(wages_perc)"),control=plotvgam.control(ylim=c(-.3,1), lcol="blue", scol="black"))
+#Years since studying
+plotvgam(fitgam, rugplot=F, se=F, xlab="Years since studying", ylab="effect on satisfaction", which.term=c("s(ehtse_au)"),control=plotvgam.control(ylim=c(-1,1), lcol="blue", scol="blue"))
+plotvgam(fitgam, rugplot=F, se=F, which.term=c("s(ehtse_anglo)"),control=plotvgam.control(add.arg=T, lcol="red", scol="red"))
+plotvgam(fitgam, rugplot=F, se=F, which.term=c("s(ehtse_others)"),control=plotvgam.control(add.arg=T, lcol="black", scol="black"))
+legend("bottomright",c("Australians", "English-speaking migrants", "Other migrants") , col=c("blue","red","black"), lty=c(1,1,1) )
+```
+
+
+
+## Differences
+TODO
+
+```{r eval=F, include=T, echo=F, comment=NA}
+d=deltapay=by(x, x$xwaveid, function(x){n=nrow(x);return(x$wsfei[2:n]/x$wsfei[1:(n-1)])})
+plot(log(d[[1]]), xlim=c(0,12),ylim=c(0.1,20), xlab='wave', ylab='log(annual salary)')
+for (i in 2:length(d)) {
+  if (!is.null(d[[i]])){
+    if (all(!is.na(d[[i]]))) {
+      points(log(d[[i]]))
+    }
+  }
+}
+
+d=deltaperc=by(x, x$xwaveid, function(x){n=nrow(x);return(x$wages_perc[2:n]-x$wages_perc[1:(n-1)])})
+plot(log(d[[1]]), xlim=c(0,12),ylim=c(0,1), xlab='wave', ylab='wages_perc')
+for (i in 2:length(d)) {
+  if (!is.null(d[[i]])){
+    if (all(!is.na(d[[i]]))) {
+      points(d[[i]])
+    }
+  }
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
