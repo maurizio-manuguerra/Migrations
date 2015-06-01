@@ -1,17 +1,18 @@
 #' @title The testing function
 #' @export
 test <- function(){
-  knit("~/Documents/git/Migrations/vignettes/HILDA.Rmd")
+  knit("~/Dropbox/Attachments/-.Migrations/code/HILDA.Rmd")
 }
 
 #' Function to check properties by xwaveid
+#' @export
 check_xwaveid <- function(x){
   check_int <- function(x){
-    if(x$yrivwlst[1]-x$yrivwfst[1] != max(x$hgage)-min(x$hgage)) {
-      print(paste(x$xwaveid[1], x$yrivwfst[1], x$yrivwlst[1], min(x$hgage), max(x$hgage),min(x$wave), max(x$wave)))
-    }
+    if(x$yrivwlst[1]-x$yrivwfst[1] != max(x$hgage)-min(x$hgage)) 
+      return(paste(x$xwaveid[1], x$yrivwfst[1], x$yrivwlst[1], min(x$hgage), max(x$hgage),min(x$wave), max(x$wave)))
   }
   out <- by(x, x$xwaveid, check_int)
+  out
 }
 
 #' @title Pre-processing of data
