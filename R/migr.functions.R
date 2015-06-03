@@ -1,7 +1,30 @@
 #' @title The testing2 function
 #' @export
 test2 <- function(){
-  knit("~/Dropbox/Attachments/-.Migrations/code/HILDA.Rmd")
+  #knit("~/Dropbox/Attachments/-.Migrations/code/HILDA.Rmd")
+  library(mgcv)
+  x = clean_data(HILDA)
+  model27=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+  pdf("fit27lowhigh.pdf")
+  par(mfrow=c(3,1))
+  for (i in 1:20){
+    print(i)
+    wage=i*5000
+    #xlow=x[x$wsfei<wage,]
+    #xhigh=x[x$wsfei>=wage,]
+    #xint=x[x$wsfei>=(wage-5000) & x$wsfei<(wage+5000),]
+    xlow=x[x$median_wage<wage,]
+    xhigh=x[x$median_wage>=wage,]
+    xint=x[x$median_wage>=(wage-5000) & x$median_wage<(wage+5000),]
+    fit27low = gam(model27, data=xlow)
+    fit27high = gam(model27, data=xhigh)
+    fit27int = gam(model27, data=xint)
+    plot(fit27low,pages=1, scale=-1, rug=F, main=paste("wage <",wage))
+    plot(fit27high,pages=1, scale=-1, rug=F, main=paste("wage >=",wage))
+    plot(fit27int,pages=1, scale=-1, rug=F, main=paste(wage-5000,"<= wage <",wage+5000))
+    }
+  par(mfrow=c(1,1))
+  dev.off()
 }
 
 #' @title The testing function
@@ -226,6 +249,7 @@ clean_data <- function(x){
   facto <- c("jbmspay","jbmssec")
   for (f in facto) x[,f]=factor(x[,f], ordered=T)
   x$wsfei[x$wsfei==0] = 1
+  x$hifefp[x$hifefp==0] = 1
   x$dob <- 2012 - x$hgage
   x$age <- x$yrivwfst -x$dob - 1 + x$wave
   #years since studying FT
