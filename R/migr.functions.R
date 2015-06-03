@@ -1,7 +1,182 @@
+#' @title The testing2 function
+#' @export
+test2 <- function(){
+  knit("~/Dropbox/Attachments/-.Migrations/code/HILDA.Rmd")
+}
+
 #' @title The testing function
 #' @export
 test <- function(){
-  knit("~/Dropbox/Attachments/-.Migrations/code/HILDA.Rmd")
+## ----load-libraries, echo=F, cache=F-------------------------------------
+library(mgcv)
+library(ordinal)
+
+## ----data_manipulation, eval=T, include=T, echo=F, comment=NA, cache=F----
+#library(readstata13)
+#setwd("~/Dropbox/Attachments/-.Migrations/data")
+#load("Hilda.RData")
+#x=read.dta13("MAURIZIO_HILDA_extraction.dta")
+library(Migrations)
+x = clean_data(HILDA)
+
+## ----fit26, eval=T, include=T, echo=T, comment=NA, cache=F---------------
+model26=(jbhru ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit26 = gam(model26, data=x)
+anova(fit26)
+plot(fit26,pages=1, scale=-1, rug=F)
+
+## ----fit27, eval=T, include=T, echo=T, comment=NA, cache=F---------------
+model27=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27 = gam(model27, data=x)
+anova(fit27)
+plot(fit27,pages=1, scale=-1, rug=F)
+
+## ----fit27bis, eval=T, include=T, echo=T, comment=NA, cache=F------------
+model27bis=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab + jbhru)
+fit27bis = gam(model27bis, data=x)
+anova(fit27bis)
+plot(fit27bis,pages=1, scale=-1, rug=F)
+
+## ----fit27weekly, eval=T, include=T, echo=T, comment=NA, cache=F---------
+x2=x[x$wscei>0 & x$jbhru>0,]
+x2$wpw = x2$wscei/x2$jbhru
+model27weekly=(log(wscei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27weekly = gam(model27weekly, data=x2)
+anova(fit27weekly)
+plot(fit27weekly,pages=1, scale=-1, rug=F)
+
+## ----fit27hrwage, eval=T, include=T, echo=T, comment=NA, cache=F---------
+x2=x[x$wscei>0 & x$jbhru>0,]
+x2$hrw = x2$wscei/x2$jbhru
+model27hrwage=(hrw ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27hrwage = gam(model27hrwage, data=x2)
+anova(fit27hrwage)
+plot(fit27hrwage,pages=1, scale=-1, rug=F)
+
+## ----fit28, eval=T, include=T, echo=T, comment=NA, cache=F---------------
+model28=(wages_perc ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit28 = gam(model28, data=x)
+anova(fit28)
+plot(fit28,pages=1, scale=-1, rug=F)
+
+## ----fit27rnd, eval=T, include=T, echo=T, comment=NA, cache=F------------
+load("~/Dropbox/Attachments/-.Migrations/data/fit27rnd.RData")
+#model27rnd=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+#fit27rnd = gamm(model27, random=list(xwaveid=~1), data=x)
+anova(fit27rnd$gam)
+plot(fit27rnd$gam,pages=1, scale=-1, rug=F)
+
+## ----fit27byAge, eval=T, include=T, echo=T, comment=NA, cache=F----------
+model27byAge=(log(wsfei) ~ s(wave_age1) + s(wave_age2) + s(wave_age3) + s(wave_age4) + s(wave_age5) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27byAge = gam(model27byAge, data=x)
+anova(fit27byAge)
+plot(fit27byAge,pages=1, scale=-1, rug=F)
+
+## ----fit27byAgeLessThan40, eval=T, include=T, echo=T, comment=NA, cache=F----
+x2 <- x[x$jbhru<=40,]
+#x3 <- x[x$jbhru>40,]
+
+model27byAge=(log(wsfei) ~ s(wave_age1) + s(wave_age2) + s(wave_age3) + s(wave_age4) + s(wave_age5) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27byAge = gam(model27byAge, data=x2)
+anova(fit27byAge)
+plot(fit27byAge,pages=1, scale=-1, rug=F)
+
+## ----fit27byMigrationStatus, eval=T, include=T, echo=T, comment=NA, cache=F----
+model27byMigrationStatus=(log(wsfei) ~ s(wave_au) + s(wave_anglo) + s(wave_others) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct) # aneab cannot stay in the regression as few unique covariate combinations with wave_*
+fit27byMigrationStatus = gam(model27byMigrationStatus, data=x)
+anova(fit27byMigrationStatus)
+plot(fit27byMigrationStatus,pages=1, scale=-1, rug=F) #all.terms=T
+
+## ----fit27byEducation, eval=T, include=T, echo=T, comment=NA, cache=F----
+model27byEducation=(log(wsfei) ~ s(wave_ed1) + s(wave_ed2) + s(wave_ed3) + s(wave_ed4) + s(wave_ed5) + s(wave_ed6) + s(wave_ed7) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27byEducation = gam(model27byEducation, data=x)
+anova(fit27byEducation)
+plot(fit27byEducation,pages=1, scale=-1, rug=F) #all.terms=T
+
+## ----fit27bySkilledJobs, eval=T, include=T, echo=T, comment=NA, cache=F----
+model27bySkilledJobs=(log(wsfei) ~ s(x$wave_skill1) + s(x$wave_skill2) + s(x$wave_skill3) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27bySkilledJobs = gam(model27bySkilledJobs, data=x)
+anova(fit27bySkilledJobs)
+plot(fit27bySkilledJobs,pages=1, scale=-1, rug=F) #all.terms=T
+
+## ----fit27bySalary, eval=T, include=T, echo=T, comment=NA, cache=F-------
+model27bySalary=(log(wsfei) ~ s(x$wave_wage1) + s(x$wave_wage2) + s(x$wave_wage3) + s(x$wave_wage4) + s(x$wave_wage5) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27bySalary = gam(model27bySalary, data=x)
+anova(fit27bySalary)
+plot(fit27bySalary,pages=1, scale=-1, rug=F) #all.terms=T
+
+## ----fit28rnd, eval=T, include=T, echo=F, comment=NA---------------------
+load("~/Dropbox/Attachments/-.Migrations/data/fit28rnd.RData")
+#fit28rnd = gamm(model28, random=list(xwaveid=~1), data=x)
+#summary(fit28rnd$lme)
+anova(fit28rnd$gam)
+plot(fit28rnd$gam,pages=1)
+
+#Males vs females
+#xm=x[x$sex=="[1] Male",]
+#xf=x[x$sex=="[2] Female",]
+#model26m=(wsfei ~ s(wave) +  hgage + I(hgage^2) + s(anyoa) + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+#fit26m = gam(model26m, data=xm)
+#anova(fit26m)
+#plot(fit26m,pages=1)
+#model26f=(wsfei ~ s(wave) +  hgage + I(hgage^2) + s(anyoa) + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + #jbmwpsz + jbocct + aneab)
+#fit26f = gam(model26f, data=xf)
+#anova(fit26f)
+#plot(fit26f,pages=1)
+
+## ----fit28byAge, eval=T, include=T, echo=T, comment=NA, cache=F----------
+model28byAge=(wages_perc ~ s(wave_age1) + s(wave_age2) + s(wave_age3) + s(wave_age4) + s(wave_age5) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit28byAge = gam(model28byAge, data=x)
+anova(fit28byAge)
+plot(fit28byAge,pages=1, scale=-1, rug=F)
+
+## ----fit28byAgeLessThan40, eval=T, include=T, echo=T, comment=NA, cache=F----
+x2 <- x[x$jbhru<=40,]
+#x3 <- x[x$jbhru>40,]
+
+model28byAge=(wages_perc ~ s(wave_age1) + s(wave_age2) + s(wave_age3) + s(wave_age4) + s(wave_age5) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit28byAge = gam(model28byAge, data=x2)
+anova(fit28byAge)
+plot(fit28byAge,pages=1, scale=-1, rug=F)
+
+## ----fit28byMigrationStatus, eval=T, include=T, echo=T, comment=NA, cache=F----
+model28byMigrationStatus=(wages_perc ~ s(wave_au) + s(wave_anglo) + s(wave_others) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct) # aneab cannot stay in the regression as few unique covariate combinations with wave_*
+fit28byMigrationStatus = gam(model28byMigrationStatus, data=x)
+anova(fit28byMigrationStatus)
+plot(fit28byMigrationStatus,pages=1, scale=-1, rug=F) #all.terms=T
+
+## ----fit28byEducation, eval=T, include=T, echo=T, comment=NA, cache=F----
+model28byEducation=(wages_perc ~ s(wave_ed1) + s(wave_ed2) + s(wave_ed3) + s(wave_ed4) + s(wave_ed5) + s(wave_ed6) + s(wave_ed7) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit28byEducation = gam(model28byEducation, data=x)
+anova(fit28byEducation)
+plot(fit28byEducation,pages=1, scale=-1, rug=F) #all.terms=T
+
+## ----fit28bySkilledJobs, eval=T, include=T, echo=T, comment=NA, cache=F----
+model28bySkilledJobs=(wages_perc ~ s(x$wave_skill1) + s(x$wave_skill2) + s(x$wave_skill3) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit28bySkilledJobs = gam(model28bySkilledJobs, data=x)
+anova(fit28bySkilledJobs)
+plot(fit28bySkilledJobs,pages=1, scale=-1, rug=F) #all.terms=T
+
+## ----fit28bySalary, eval=T, include=T, echo=T, comment=NA, cache=F-------
+model28bySalary=(wages_perc ~ s(x$wave_wage1) + s(x$wave_wage2) + s(x$wave_wage3) + s(x$wave_wage4) + s(x$wave_wage5) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit28bySalary = gam(model28bySalary, data=x)
+anova(fit28bySalary)
+plot(fit28bySalary,pages=1, scale=-1, rug=F) #all.terms=T
+
+## ----fit31, eval=T, include=T, echo=F, comment=NA, cache=F---------------
+#x2: workers with info on years since last studying
+x2=x[x$ehtse>0 & (as.integer(x$esdtl)==11 | as.integer(x$esdtl)==12 | as.integer(x$esdtl)==17),]
+model31=(wages_perc ~ s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit31 = gam(model31, data=x2)
+anova(fit31)
+plot(fit31, rug=F ,pages=1)
+
+## ----fit32, eval=T, include=T, echo=F, comment=NA------------------------
+model32=(wages_perc ~ s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others) + sex + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit32 = gam(model32, data=x2)
+anova(fit32)
+plot(fit32, rug=F ,pages=1)
+
 }
 
 #' Function to check properties by xwaveid
