@@ -1,3 +1,72 @@
+#' @title Histogram of salaries by migration status
+#' @export
+test7 <- function(x, what="", main=paste("Salaries by", what), cex=0.4){
+  x$wage_cat=ceiling(x$wsfei/10000)*10000
+  x$wage_cat[x$wage_cat>150000]=1000000
+  x[what][,1]=droplevels(x[what][,1])
+  tt=table(x[what][,1],x$wage_cat)
+  what_lab = c(dimnames(tt)[[1]])
+  wage_lab = c(dimnames(tt)[[2]])
+  barplot(tt, main=main, ylab="Total", col=heat.colors(length(what_lab)), space=0.1, cex.axis=0.8, las=1,names.arg=wage_lab, cex=0.8) 
+  legend(x="topright", what_lab, fill=heat.colors(length(what_lab)),cex=cex)
+}
+
+#' @title Histogram of salaries by migration status
+#' @export
+test6 <- function(x, main="Salaries by migration status", cex=0.4){
+  x$wage_cat=ceiling(x$wsfei/10000)*10000
+  x$wage_cat[x$wage_cat>150000]=1000000
+  tt=table(x$ancob3,x$wage_cat)
+  migr_lab = c(dimnames(tt)[[1]])
+  wage_lab = c(dimnames(tt)[[2]])
+  barplot(tt, main=main, ylab="Total", col=heat.colors(length(migr_lab)), space=0.1, cex.axis=0.8, las=1,names.arg=wage_lab, cex=0.8) 
+  legend(x="topright", migr_lab, fill=heat.colors(length(migr_lab)),cex=cex)
+}
+
+#' @title Histogram of salaries by hours per week
+#' @export
+test5 <- function(x, main="Salaries by hours per week", cex=0.4){
+  x$wage_cat=ceiling(x$wsfei/10000)*10000
+  x$wage_cat[x$wage_cat>150000]=1000000
+  x$whrs_cat=ceiling(x$jbhru/10)*10
+  x$whrs_cat[x$whrs_cat>100]=150
+  tt=table(x$whrs_cat,x$wage_cat)
+  hrs_lab = c(dimnames(tt)[[1]])
+  wage_lab = c(dimnames(tt)[[2]])
+  barplot(tt, main=main, ylab="Total", col=heat.colors(length(hrs_lab)), space=0.1, cex.axis=0.8, las=1,names.arg=wage_lab, cex=0.8) 
+  legend(x="topright", hrs_lab, fill=heat.colors(length(hrs_lab)),cex=cex)
+}
+
+
+
+
+#' @title Histogram of salaries by job
+#' @export
+test4 <- function(x, main="Salaries by job", cex=0.4){
+  x$wage_cat=ceiling(x$wsfei/10000)*10000
+  x$wage_cat[x$wage_cat>150000]=1000000
+  x$jbmo62 = droplevels(x$jbmo62)
+  tt=table(x$jbmo62,x$wage_cat)
+  job_lab = c(dimnames(tt)[[1]])
+  wage_lab = c(dimnames(tt)[[2]])
+  barplot(tt, main=main, ylab="Total", col=heat.colors(length(job_lab)), space=0.1, cex.axis=0.8, las=1,names.arg=wage_lab, cex=0.8) 
+  legend(x="topright", job_lab, fill=heat.colors(length(job_lab)),cex=cex)
+}
+
+
+#' @title The testing2 function
+#' @export
+test3 <- function(wage, main=""){
+  xlow=x[x$wsfei<wage,]
+  xhigh=x[x$wsfei>=wage,]
+  joblow=as.vector(table(xlow$jbmo62))
+  jobhigh=as.vector(table(xhigh$jbmo62))
+  joball=as.vector(table(x$jbmo62))
+  plot(joblow/sum(joblow)*100, col='red', t='l', main=main)
+  lines(jobhigh/sum(jobhigh)*100,col='green')
+  #lines(joball/sum(joball)*100)
+}
+
 #' @title The testing2 function
 #' @export
 test2 <- function(){
