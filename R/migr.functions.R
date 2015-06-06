@@ -1,4 +1,4 @@
-#' @title Histogram of salaries by migration status
+#' @title Histogram of salaries by input variable
 #' @export
 test7 <- function(x, what="", main=paste("Salaries by", what), cex=0.4){
   x$wage_cat=ceiling(x$wsfei/10000)*10000
