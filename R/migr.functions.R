@@ -1,4 +1,4 @@
-#' @title Histogram of salaries by input variable
+#' @title Histogram of salaries by input variable (this make many functions below redundant)
 #' @export
 test7 <- function(x, what="", main=paste("Salaries by", what), cex=0.4){
   x$wage_cat=ceiling(x$wsfei/10000)*10000
@@ -99,6 +99,13 @@ test2 <- function(){
 #' @title The testing function
 #' @export
 test <- function(){
+	test_all()
+}
+
+
+#' @title The testing function
+#' @export
+test_all <- function(){
 ## ----load-libraries, echo=F, cache=F-------------------------------------
 library(mgcv)
 library(ordinal)
