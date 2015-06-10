@@ -73,7 +73,7 @@ test2 <- function(){
   #knit("~/Dropbox/Attachments/-.Migrations/code/HILDA.Rmd")
   library(mgcv)
   x = clean_data(HILDA)
-  model27=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+  model27=(jbhru ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
   pdf("fit27lowhigh.pdf")
   par(mfrow=c(3,1))
   for (i in 1:20){
@@ -292,7 +292,7 @@ check_xwaveid <- function(x){
 #' @title Pre-processing of data
 #' @export
 clean_data <- function(x){
-  x <- x[which(substr(x$jbmo62, 2,2)!="-"),] #Delete records without info on job
+  #x <- x[which(substr(x$jbmo62, 2,2)!="-"),] #Delete records without info on job
   x = x[x$yrivwfst!=-2,] #Delete records without year of first interview
   x$age_at_interview = x$hgage - (2012-x$yrivwfst)
   

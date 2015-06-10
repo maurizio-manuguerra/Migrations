@@ -2,11 +2,11 @@
 % Please edit documentation in R/migr.functions.R
 \name{test7}
 \alias{test7}
-\title{Histogram of salaries by migration status}
+\title{Histogram of salaries by input variable (this make many functions below redundant)}
 \usage{
 test7(x, what = "", main = paste("Salaries by", what), cex = 0.4)
 }
 \description{
-Histogram of salaries by migration status
+Histogram of salaries by input variable (this make many functions below redundant)
 }
 
