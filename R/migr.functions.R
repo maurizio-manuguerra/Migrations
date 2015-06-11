@@ -73,24 +73,24 @@ test2 <- function(){
   #knit("~/Dropbox/Attachments/-.Migrations/code/HILDA.Rmd")
   library(mgcv)
   x = clean_data(HILDA)
-  model27=(jbhru ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+  model27=(jbhru ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab  + other_household + esempst)
   pdf("fit27lowhigh.pdf")
   par(mfrow=c(3,1))
-  for (i in 1:20){
+  for (i in 1:5){
     print(i)
-    wage=i*5000
+    wage=i*30000
     #xlow=x[x$wsfei<wage,]
     #xhigh=x[x$wsfei>=wage,]
     #xint=x[x$wsfei>=(wage-5000) & x$wsfei<(wage+5000),]
     xlow=x[x$median_wage<wage,]
     xhigh=x[x$median_wage>=wage,]
-    xint=x[x$median_wage>=(wage-5000) & x$median_wage<(wage+5000),]
+    xint=x[x$median_wage>=(wage-15000) & x$median_wage<(wage+15000),]
     fit27low = gam(model27, data=xlow)
     fit27high = gam(model27, data=xhigh)
     fit27int = gam(model27, data=xint)
     plot(fit27low,pages=1, scale=-1, rug=F, main=paste("wage <",wage))
     plot(fit27high,pages=1, scale=-1, rug=F, main=paste("wage >=",wage))
-    plot(fit27int,pages=1, scale=-1, rug=F, main=paste(wage-5000,"<= wage <",wage+5000))
+    plot(fit27int,pages=1, scale=-1, rug=F, main=paste(wage-15000,"<= wage <",wage+15000))
     }
   par(mfrow=c(1,1))
   dev.off()
@@ -293,14 +293,15 @@ check_xwaveid <- function(x){
 #' @export
 clean_data <- function(x){
   #x <- x[which(substr(x$jbmo62, 2,2)!="-"),] #Delete records without info on job
-  x = x[x$yrivwfst!=-2,] #Delete records without year of first interview
-  x$age_at_interview = x$hgage - (2012-x$yrivwfst)
+  x$jbmo62[which(substr(x$jbmo62, 2,2)=="-")] = "[-1] Not asked" 
+  x$jbmo62 = droplevels(x$jbmo62)
+  #x = x[x$yrivwfst!=-2,] #Delete records without year of first interview
   
   x$anmigc = as.factor(x$anmigc)
   
   # ancob [country of birth] --> 3 categories: AU, anglo, others
   missings.ancob=which(as.numeric(x$ancob) <=10)
-  x = x[-missings.ancob,]
+  #x = x[-missings.ancob,] #Delete records without info on ancob
   au = c("[1101] Australia")
   anglo = c("[2100] United Kingdom", "[2201] Ireland", "[9225] South Africa", "[8102] Canada", "[8104] United States of America")
   i.au = which(x$ancob %in% au)
@@ -308,15 +309,18 @@ clean_data <- function(x){
   ancob3 = rep("imm_others", nrow(x)) 
   ancob3[i.au] = "australians"
   ancob3[i.anglo] = "imm_anglo"
+  ancob3[missings.ancob] = "no_info"
   x$ancob3 = factor(ancob3)
   
-  x$edcoq[is.na(x$edcoq)] = 1 #<----- check
-  x$edqenr[is.na(x$edqenr)] = 1 #<----- check
+  x$edcoq[is.na(x$edcoq)] = -1 #<----- check
+  x$edqenr[is.na(x$edqenr)] = -1 #<----- check
+  x$edqenr = factor(x$edqenr)
   x$aneab[i.au] = 1
   
   # anyoa [year of arriva] --> wave-age for non-migrants
-  x$anyoa[i.au] = 2012 - x$hgage[i.au]
-  x=x[x$anyoa>1900,]
+  x$dob <- 2000 + x$wave - x$hgage
+  x$anyoa[i.au] = x$dob[i.au]
+  #x=x[x$anyoa>1900,] ##Delete records with non-sense year of arrival in Australia ###taken away from regressions
   #WARNNING: i.au no more valid from here on
   ##Factors##
   facto <- c("xwaveid","edcoq")
@@ -325,9 +329,8 @@ clean_data <- function(x){
   facto <- c("jbmspay","jbmssec")
   for (f in facto) x[,f]=factor(x[,f], ordered=T)
   x$wsfei[x$wsfei==0] = 1
+  x$other_household = x$hifefp-x$hifefn-x$wsfei
   x$hifefp[x$hifefp==0] = 1
-  x$dob <- 2012 - x$hgage
-  x$age <- x$yrivwfst -x$dob - 1 + x$wave
   #years since studying FT
   x$ehtse_au = x$ehtse_anglo = x$ehtse_others = 0
   x$ehtse_au[x$ancob3=="australians"] = x$ehtse[x$ancob3=="australians"]
@@ -348,6 +351,32 @@ clean_data <- function(x){
   x$wave_au[x$ancob3=="australians"] = x$wave[x$ancob3=="australians"] 
   x$wave_anglo[x$ancob3=="imm_anglo"] = x$wave[x$ancob3=="imm_anglo"] 
   x$wave_others[x$ancob3=="imm_others"] = x$wave[x$ancob3=="imm_others"] 
+  #wave stratified by labour force status (esdtl)
+  lf_lev = levels(x$esdtl)
+  x$wave_no_resp = x$wave_FT = x$wave_PT = x$wave_lookingFT = x$wave_lookingPT = x$wave_not_employed_marg_attach = x$wave_not_employed_not_marg_attach = x$wave_emplyed_hrs_unknown = 0
+  x$wave_no_resp[which(x$esdtl == lf_lev[1])] = x$wave[which(x$esdtl == lf_lev[1])]
+  x$wave_FT[which(x$esdtl == lf_lev[11])] = x$wave[which(x$esdtl == lf_lev[11])]
+  x$wave_PT[which(x$esdtl == lf_lev[12])] = x$wave[which(x$esdtl == lf_lev[12])]
+  x$wave_lookingFT[which(x$esdtl == lf_lev[13])] = x$wave[which(x$esdtl == lf_lev[13])]
+  x$wave_lookingPT[which(x$esdtl == lf_lev[14])] = x$wave[which(x$esdtl == lf_lev[14])]
+  x$wave_not_employed_marg_attach[which(x$esdtl == lf_lev[15])] = x$wave[which(x$esdtl == lf_lev[15])]
+  x$wave_not_employed_not_marg_attach[which(x$esdtl == lf_lev[16])] = x$wave[which(x$esdtl == lf_lev[16])]
+  x$wave_emplyed_hrs_unknown[which(x$esdtl == lf_lev[17])] = x$wave[which(x$esdtl == lf_lev[17])]
+  #wave straified by current employment status (esempst)
+  #59233       -10  [-10] Non-responding person
+  #60076        -1  [-1] Not asked
+  #87776         1  [1] Employee
+  #5912         2  [2] Employee of own business
+  #10967         3  [3] Employer/Self-employed
+  #568         4  [4] Unpaid family worker
+  x$esempst = droplevels(x$esempst)
+  empl_lev= levels(x$esempst)
+  x$wave_empl1 = x$wave_empl2 = x$wave_empl3 = x$wave_empl4 = x$wave_empl5 = 0
+  x$wave_empl1[which(x$esempst == empl_lev[1] | x$esempst == empl_lev[2])] = x$wave[which(x$esempst == empl_lev[1] | x$esempst == empl_lev[2])]
+  x$wave_empl2[which(x$esempst == empl_lev[3])] = x$wave[which(x$esempst == empl_lev[3])]
+  x$wave_empl3[which(x$esempst == empl_lev[4])] = x$wave[which(x$esempst == empl_lev[4])]
+  x$wave_empl4[which(x$esempst == empl_lev[5])] = x$wave[which(x$esempst == empl_lev[5])]
+  x$wave_empl5[which(x$esempst == empl_lev[6])] = x$wave[which(x$esempst == empl_lev[6])]  
   #wave stratified by education
   x$wave_ed1 = x$wave_ed2 = x$wave_ed3 = x$wave_ed4 = x$wave_ed5 = x$wave_ed6 = x$wave_ed7 = x$wave_ed8 = 0
   ed_lev = levels(droplevels(x$edhigh1))
@@ -360,9 +389,10 @@ clean_data <- function(x){
   x$wave_ed7[x$edhigh1==ed_lev[7]] = x$wave[x$edhigh1==ed_lev[7]] 
   x$wave_ed8[x$edhigh1==ed_lev[8]] = x$wave[x$edhigh1==ed_lev[8]] 
   #wave stratified by skilled jobs (3 categories)
-  x$wave_skill1 = x$wave_skill2 = x$wave_skill3 = 0
+  x$wave_skill0 = x$wave_skill1 = x$wave_skill2 = x$wave_skill3 = 0
   skill_limits = c(1,4,7)
   skill_category = findInterval(as.integer(sapply(x$jbmo62, substr, 2,2)), skill_limits)
+  x$wave_skill0[which(is.na(skill_category))] = x$wave[which(is.na(skill_category))] 
   x$wave_skill1[which(skill_category==1)] = x$wave[which(skill_category==1)] 
   x$wave_skill2[which(skill_category==2)] = x$wave[which(skill_category==2)] 
   x$wave_skill3[which(skill_category==3)] = x$wave[which(skill_category==3)] 
@@ -394,8 +424,8 @@ clean_data <- function(x){
     wages_perc <- individual_quantiles(wages)
     x[ii,"wages_perc"] <- wages_perc
   }
-  x=x[!is.na(x$wages_perc),]
-  
+  #x=x[!is.na(x$wages_perc),] #Delete records with wages_perc = NA
+  return(x)
 }
 
 #' @title Quantiles by job
