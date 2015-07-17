@@ -293,7 +293,7 @@ check_xwaveid <- function(x){
 #' @export
 clean_data <- function(x){
   #x <- x[which(substr(x$jbmo62, 2,2)!="-"),] #Delete records without info on job
-  x$jbmo62[which(substr(x$jbmo62, 2,2)=="-")] = "[-1] Not asked" 
+  x$jbmo62[which(substr(x$jbmo62, 2,2)=="-")] = NA #"[-1] Not asked" 
   x$jbmo62 = droplevels(x$jbmo62)
   #x = x[x$yrivwfst!=-2,] #Delete records without year of first interview
   
@@ -310,6 +310,7 @@ clean_data <- function(x){
   ancob3[i.au] = "australians"
   ancob3[i.anglo] = "imm_anglo"
   ancob3[missings.ancob] = "no_info"
+  x$ancob3 = ancob3
   
   #country completed highest education
   x$edcoq[is.na(x$edcoq) | x$edcoq<0] = -1 #<----- consolidate
@@ -327,14 +328,28 @@ clean_data <- function(x){
   x$anyoa[i.au] = x$dob[i.au] #--> dob for australian born
   #There are problems with this var: same subject, can take the real value or -10 if he/she decides to not respond.
   
-  #WARNNING: i.au no more valid from here on
+  #### New categorical variables
+  
+  #wave stratified by age groups
+  age_limits = c(15,25,35,45,55)
+  x$age_category = findInterval(x$hgage, age_limits)
+  
+  #wave stratified by skilled jobs (3 categories)
+  skill_limits = c(1,4,7)
+  x$skill_category = findInterval(as.integer(sapply(x$jbmo62, substr, 2,2)), skill_limits)
+  
+  #wave stratified by subject median salary
+  median_wage_by_id <- by(x, x$xwaveid, function(x)median(x$wsfei))
+  x$median_wage <- median_wage_by_id[as.character(x$xwaveid)]
+  wage_limits = c(0,5000,50000,100000,200000)
+  x$wage_category = findInterval(x$wsfei, wage_limits)
   
   ##Factors##
-  facto <- c("xwaveid","edcoq","edqenr","ancob3","aneab")
+  facto <- c("xwaveid", "edcoq", "edqenr", "ancob3", "aneab", "skill_category")
   for (f in facto) x[,f]=factor(x[,f])
   
   ##Ordered factors##
-  facto <- c("jbmspay","jbmssec")
+  facto <- c("jbmspay","jbmssec", "age_category", "wage_category")
   for (f in facto) x[,f]=factor(x[,f], ordered=T)
   
   #Annual salary
@@ -346,83 +361,7 @@ clean_data <- function(x){
   #Household financial year gross=0 --> 1
   x$hifefp[x$hifefp==0] = 1
   
-  #years since studying FT
-  x$ehtse_au = x$ehtse_anglo = x$ehtse_others = 0
-  x$ehtse_au[x$ancob3=="australians"] = x$ehtse[x$ancob3=="australians"]
-  x$ehtse_anglo[x$ancob3=="imm_anglo"] = x$ehtse[x$ancob3=="imm_anglo"]
-  x$ehtse_others[x$ancob3=="imm_others"] = x$ehtse[x$ancob3=="imm_others"]
-  ####
-  #wave stratified by age groups (<=40hrs, >40hrs)
-  age_limits = c(15,25,35,45,55)
-  age_category = findInterval(x$hgage, age_limits)
-  x$wave_age1 = x$wave_age2 = x$wave_age3 = x$wave_age4 = x$wave_age5 = 0
-  x$wave_age1[which(age_category == 1)] = x$wave[which(age_category == 1)] 
-  x$wave_age2[which(age_category == 2)] = x$wave[which(age_category == 2)] 
-  x$wave_age3[which(age_category == 3)] = x$wave[which(age_category == 3)] 
-  x$wave_age4[which(age_category == 4)] = x$wave[which(age_category == 4)] 
-  x$wave_age5[which(age_category == 5)] = x$wave[which(age_category == 5)] 
-  #wave stratified by migration status (Australians vs English speaking migrants vs other migrants)
-  x$wave_au = x$wave_anglo = x$wave_others = 0
-  x$wave_au[x$ancob3=="australians"] = x$wave[x$ancob3=="australians"] 
-  x$wave_anglo[x$ancob3=="imm_anglo"] = x$wave[x$ancob3=="imm_anglo"] 
-  x$wave_others[x$ancob3=="imm_others"] = x$wave[x$ancob3=="imm_others"] 
-  #wave stratified by labour force status (esdtl)
-  lf_lev = levels(x$esdtl)
-  x$wave_no_resp = x$wave_FT = x$wave_PT = x$wave_lookingFT = x$wave_lookingPT = x$wave_not_employed_marg_attach = x$wave_not_employed_not_marg_attach = x$wave_emplyed_hrs_unknown = 0
-  x$wave_no_resp[which(x$esdtl == lf_lev[1])] = x$wave[which(x$esdtl == lf_lev[1])]
-  x$wave_FT[which(x$esdtl == lf_lev[11])] = x$wave[which(x$esdtl == lf_lev[11])]
-  x$wave_PT[which(x$esdtl == lf_lev[12])] = x$wave[which(x$esdtl == lf_lev[12])]
-  x$wave_lookingFT[which(x$esdtl == lf_lev[13])] = x$wave[which(x$esdtl == lf_lev[13])]
-  x$wave_lookingPT[which(x$esdtl == lf_lev[14])] = x$wave[which(x$esdtl == lf_lev[14])]
-  x$wave_not_employed_marg_attach[which(x$esdtl == lf_lev[15])] = x$wave[which(x$esdtl == lf_lev[15])]
-  x$wave_not_employed_not_marg_attach[which(x$esdtl == lf_lev[16])] = x$wave[which(x$esdtl == lf_lev[16])]
-  x$wave_emplyed_hrs_unknown[which(x$esdtl == lf_lev[17])] = x$wave[which(x$esdtl == lf_lev[17])]
-  #wave straified by current employment status (esempst)
-  #59233       -10  [-10] Non-responding person
-  #60076        -1  [-1] Not asked
-  #87776         1  [1] Employee
-  #5912         2  [2] Employee of own business
-  #10967         3  [3] Employer/Self-employed
-  #568         4  [4] Unpaid family worker
-  x$esempst = droplevels(x$esempst)
-  empl_lev= levels(x$esempst)
-  x$wave_empl1 = x$wave_empl2 = x$wave_empl3 = x$wave_empl4 = x$wave_empl5 = 0
-  x$wave_empl1[which(x$esempst == empl_lev[1] | x$esempst == empl_lev[2])] = x$wave[which(x$esempst == empl_lev[1] | x$esempst == empl_lev[2])]
-  x$wave_empl2[which(x$esempst == empl_lev[3])] = x$wave[which(x$esempst == empl_lev[3])]
-  x$wave_empl3[which(x$esempst == empl_lev[4])] = x$wave[which(x$esempst == empl_lev[4])]
-  x$wave_empl4[which(x$esempst == empl_lev[5])] = x$wave[which(x$esempst == empl_lev[5])]
-  x$wave_empl5[which(x$esempst == empl_lev[6])] = x$wave[which(x$esempst == empl_lev[6])]  
-  #wave stratified by education
-  x$wave_ed1 = x$wave_ed2 = x$wave_ed3 = x$wave_ed4 = x$wave_ed5 = x$wave_ed6 = x$wave_ed7 = x$wave_ed8 = 0
-  ed_lev = levels(droplevels(x$edhigh1))
-  x$wave_ed1[x$edhigh1==ed_lev[1]] = x$wave[x$edhigh1==ed_lev[1]] 
-  x$wave_ed2[x$edhigh1==ed_lev[2]] = x$wave[x$edhigh1==ed_lev[2]] 
-  x$wave_ed3[x$edhigh1==ed_lev[3]] = x$wave[x$edhigh1==ed_lev[3]] 
-  x$wave_ed4[x$edhigh1==ed_lev[4]] = x$wave[x$edhigh1==ed_lev[4]] 
-  x$wave_ed5[x$edhigh1==ed_lev[5]] = x$wave[x$edhigh1==ed_lev[5]] 
-  x$wave_ed6[x$edhigh1==ed_lev[6]] = x$wave[x$edhigh1==ed_lev[6]] 
-  x$wave_ed7[x$edhigh1==ed_lev[7]] = x$wave[x$edhigh1==ed_lev[7]] 
-  x$wave_ed8[x$edhigh1==ed_lev[8]] = x$wave[x$edhigh1==ed_lev[8]] 
-  #wave stratified by skilled jobs (3 categories)
-  x$wave_skill0 = x$wave_skill1 = x$wave_skill2 = x$wave_skill3 = 0
-  skill_limits = c(1,4,7)
-  skill_category = findInterval(as.integer(sapply(x$jbmo62, substr, 2,2)), skill_limits)
-  x$wave_skill0[which(is.na(skill_category))] = x$wave[which(is.na(skill_category))] 
-  x$wave_skill1[which(skill_category==1)] = x$wave[which(skill_category==1)] 
-  x$wave_skill2[which(skill_category==2)] = x$wave[which(skill_category==2)] 
-  x$wave_skill3[which(skill_category==3)] = x$wave[which(skill_category==3)] 
-  #wave stratified by subject median salary
-  median_wage_by_id <- by(x, x$xwaveid, function(x)median(x$wsfei))
-  x$median_wage <- median_wage_by_id[as.character(x$xwaveid)]
-  wage_limits = c(0,5000,50000,100000,200000)
-  wage_category = findInterval(x$wsfei, wage_limits)
-  x$wave_wage1 = x$wave_wage2 = x$wave_wage3 = x$wave_wage4 = x$wave_wage5 = 0
-  x$wave_wage1[wage_category == 1] = x$wave[wage_category == 1]
-  x$wave_wage2[wage_category == 2] = x$wave[wage_category == 2]
-  x$wave_wage3[wage_category == 3] = x$wave[wage_category == 3]
-  x$wave_wage4[wage_category == 4] = x$wave[wage_category == 4]
-  x$wave_wage5[wage_category == 5] = x$wave[wage_category == 5]
-  ##
+
   ## CLEANING
   ##
   x <- x[x$jbhru<900,] # take away who works 997 hours per week (~3500 records)
