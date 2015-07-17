@@ -1,9 +1,9 @@
 ## ----set-options, echo=F, cache=F----------------------------------------
-options(width = 120)
+#options(width = 120)
 
 ## ----load-libraries, echo=F, cache=F-------------------------------------
 library(mgcv)
-library(ordinal)
+#library(ordinal)
 
 ## ----data_manipulation, eval=T, include=T, echo=F, comment=NA, cache=F----
 #library(readstata13)
@@ -13,6 +13,7 @@ library(ordinal)
 library(Migrations)
 x = clean_data(HILDA)
 
+pdf("analyses_2015.07.17.pdf")
 ## ----fit26, eval=T, include=T, echo=T, comment=NA, cache=F---------------
 model26=(jbhru ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct  + other_household)
 fit26 = gam(model26, data=x)
@@ -156,3 +157,4 @@ fit32 = gam(model32, data=x2)
 anova(fit32)
 plot(fit32, rug=F ,pages=1)
 
+graphics.off()
