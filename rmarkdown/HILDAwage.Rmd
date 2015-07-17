@@ -53,7 +53,38 @@ ehtse: Time since FT (full-time) education - years
 
 ## Data
 
-* Load the data and make some home cleaning (details omitted).
+Load the data and make some data managing: 
+
+Cleaning:
+1.  jbmo62: consolidate negative codes (different causes for missing info)
+2.  ancob [country of birth] --> ancob3. 3 categories: AU, anglo (UK, Ireland, South Africa, Canada, USA), others
+3.  edcoq [country completed highest education]: consolidate neg. codes and missings 
+4.  edqenr [Ever enrolled in a course of study to obtain a qualification]: consolidate neg. codes and missings 
+5.  aneab [How well speaks English]: put "very well" for australians
+6.  Date of birth <- 2000 + x$wave - x$hgage
+7.  anyoa [year of arriva] <-- dob for australian born
+8.  Factors; ordered factors: ("xwaveid","edcoq","edqenr","ancob3","aneab"; "jbmspay","jbmssec")
+9.  annual salary wsfei=0 --> 1 (for log)
+10. Household income contribution from others (hifefp-hifefn-wsfei)
+11. Household financial year gross (hifefp)=0 --> 1
+New variables:
+12. years since studying FT stratified by country of birth
+13. wave stratified by age groups, age_limits = c(15,25,35,45,55)
+14. wave stratified by migration status (Australians vs English speaking migrants vs other migrants)
+15. wave stratified by labour force status (esdtl)
+16. wave straified by current employment status (esempst)
+17. wave stratified by education
+18. wave stratified by skilled jobs (3 categories)
+19. wave stratified by subject median salary
+Cleaning:
+20. delete records of people working 997 hours per week (~3500 records)
+New variable:
+21. wages_perc: for each job in jbmo62, it's the percentile in the distribution of salaries across all the years
+Filtering:
+22. 18<= age <=65
+23. Only record when questionnarie has been filled
+
+
 
 ```{r data_manipulation, eval=T, include=T, echo=F, comment=NA, cache=F}
 #library(readstata13)

@@ -299,7 +299,7 @@ clean_data <- function(x){
   
   x$anmigc = as.factor(x$anmigc)
   
-  # ancob [country of birth] --> 3 categories: AU, anglo, others
+  #country of birth --> 3 categories: AU, anglo, others
   missings.ancob=which(as.numeric(x$ancob) <=10)
   #x = x[-missings.ancob,] #Delete records without info on ancob
   au = c("[1101] Australia")
@@ -310,27 +310,42 @@ clean_data <- function(x){
   ancob3[i.au] = "australians"
   ancob3[i.anglo] = "imm_anglo"
   ancob3[missings.ancob] = "no_info"
-  x$ancob3 = factor(ancob3)
   
-  x$edcoq[is.na(x$edcoq)] = -1 #<----- check
-  x$edqenr[is.na(x$edqenr)] = -1 #<----- check
-  x$edqenr = factor(x$edqenr)
+  #country completed highest education
+  x$edcoq[is.na(x$edcoq) | x$edcoq<0] = -1 #<----- consolidate
+  
+  #Ever enrolled in a course of study to obtain a qualification
+  x$edqenr[is.na(x$edqenr) | x$edqenr<0] = -1 #<----- consolidate
+  
+  #How well speaks English
   x$aneab[i.au] = 1
   
-  # anyoa [year of arriva] --> wave-age for non-migrants
+  #Date of birth
   x$dob <- 2000 + x$wave - x$hgage
-  x$anyoa[i.au] = x$dob[i.au]
-  #x=x[x$anyoa>1900,] ##Delete records with non-sense year of arrival in Australia ###taken away from regressions
+  
+  #anyoa [year of arriva] 
+  x$anyoa[i.au] = x$dob[i.au] #--> dob for australian born
+  #There are problems with this var: same subject, can take the real value or -10 if he/she decides to not respond.
+  
   #WARNNING: i.au no more valid from here on
+  
   ##Factors##
-  facto <- c("xwaveid","edcoq")
+  facto <- c("xwaveid","edcoq","edqenr","ancob3","aneab")
   for (f in facto) x[,f]=factor(x[,f])
+  
   ##Ordered factors##
   facto <- c("jbmspay","jbmssec")
   for (f in facto) x[,f]=factor(x[,f], ordered=T)
+  
+  #Annual salary
   x$wsfei[x$wsfei==0] = 1
+  
+  #Household income contribution from others
   x$other_household = x$hifefp-x$hifefn-x$wsfei
+  
+  #Household financial year gross=0 --> 1
   x$hifefp[x$hifefp==0] = 1
+  
   #years since studying FT
   x$ehtse_au = x$ehtse_anglo = x$ehtse_others = 0
   x$ehtse_au[x$ancob3=="australians"] = x$ehtse[x$ancob3=="australians"]
@@ -413,8 +428,7 @@ clean_data <- function(x){
   x <- x[x$jbhru<900,] # take away who works 997 hours per week (~3500 records)
   #x <- x[x$wsfei>10000,] #try only with records where the salary is greater than 10000
   
-  
-  perc_by_job =by(x, x$jbmo62, function(x)quantile(x$wsfei, prob=c(0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1)))
+  #perc_by_job =by(x, x$jbmo62, function(x)quantile(x$wsfei, prob=c(0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1)))
   jobs=levels(x$jbmo62)
   jobs=jobs[substr(jobs,1,2)!="[-"]
   x$wages_perc = rep(NA, nrow(x))
@@ -425,6 +439,9 @@ clean_data <- function(x){
     x[ii,"wages_perc"] <- wages_perc
   }
   #x=x[!is.na(x$wages_perc),] #Delete records with wages_perc = NA
+  ##Only with age>=18 and <=65 and responding to questionnaire
+  x=x[x$hgage>=18 & x$hgage<=65,]
+  x=x[x$mrcurr!="[-10] Non-responding person",]
   return(x)
 }
 
@@ -432,4 +449,16 @@ clean_data <- function(x){
 individual_quantiles <- function(x){
   n <- length(x)
   return(rank(x)/n)
+}
+
+
+#' @title Present cat vars in table
+make_table <- function(x){
+  tx=table(x)
+  nx=sapply(names(tx),function(st)strsplit(st,split='] ',fixed=T)[[1]][2])
+  for (i in 1:length(tx)) if (tx[i]>0) cat(nx[i],";",tx[i],"\n",sep='')
+}
+
+make_tables <- function(x, vars=c("sex","hhstate", "hhrih","esdtl","mrcurr","ancob3","edhigh1")){
+  tmp=sapply(vars, function(var){cat(">>",var,"<<","\n");make_table(x[[var]]);cat("---------------\n")})
 }
