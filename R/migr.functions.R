@@ -313,7 +313,16 @@ clean_data <- function(x){
   x$ancob3 = ancob3
   
   #country completed highest education
-  x$edcoq[is.na(x$edcoq) | x$edcoq<0] = -1 #<----- consolidate
+  au = c(1101)
+  anglo = c(2100, 2201, 9225, 8102, 8104)
+  i.au = which(x$edcoq %in% au)
+  i.anglo = which(x$edcoq %in% anglo)
+  i.na = which(is.na(x$edcoq))
+  x$edcoq3 = "Other country"
+  #x$edcoq[is.na(x$edcoq) | x$edcoq<0] = -1 #<----- consolidate
+  x$edcoq3[i.au] = "Australia"
+  x$edcoq3[i.anglo] = "English-speaking country"
+  x$edcoq3[i.na] = "no_info"
   
   #Ever enrolled in a course of study to obtain a qualification
   x$edqenr[is.na(x$edqenr) | x$edqenr<0] = -1 #<----- consolidate
@@ -345,7 +354,7 @@ clean_data <- function(x){
   x$wage_category = findInterval(x$wsfei, wage_limits)
   
   ##Factors##
-  facto <- c("xwaveid", "edcoq", "edqenr", "ancob3", "aneab", "skill_category")
+  facto <- c("xwaveid", "edcoq3", "edqenr", "ancob3", "aneab", "skill_category")
   for (f in facto) x[,f]=factor(x[,f])
   
   ##Ordered factors##
