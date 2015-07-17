@@ -133,13 +133,13 @@ In the next analyses, we will fit identical models with different dependent vari
 5. In the third fit (fit29), we add the random effects over the subjects (the fit fails when using the annual salary as dependent variable, but succesfully converge with wages_perc).
 
 ```{r fit26, eval=T, include=T, echo=T, comment=NA, cache=F}
-model26=(jbhru ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab  + other_household)
+model26=(jbhru ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct  + other_household)
 fit26 = gam(model26, data=x)
 anova(fit26)
 plot(fit26,pages=1, scale=-1, rug=F)
 ```
 
-There is no indication of any effect of the global crisis on the number of hours worked per week.
+There is no indication of any specific effect of the global crisis on the number of hours worked per week.
 
 ```{r fit27, eval=T, include=T, echo=T, comment=NA, cache=F}
 model27=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab + other_household)
@@ -151,7 +151,7 @@ plot(fit27,pages=1, scale=-1, rug=F)
 
 
 ```{r fit27bis, eval=T, include=T, echo=T, comment=NA, cache=F}
-model27bis=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab + jbhru  + other_household)
+model27bis=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + jbhru  + other_household)
 fit27bis = gam(model27bis, data=x)
 anova(fit27bis)
 plot(fit27bis,pages=1, scale=-1, rug=F)
@@ -162,7 +162,7 @@ In fit27bis we repeat the same regression as in fit27, but consider the weekly w
 ```{r fit27weekly, eval=T, include=T, echo=T, comment=NA, cache=F}
 x2=x[x$wscei>0 & x$jbhru>0,]
 x2$wpw = x2$wscei/x2$jbhru
-model27weekly=(log(wscei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab  + other_household)
+model27weekly=(log(wscei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct  + other_household)
 fit27weekly = gam(model27weekly, data=x2)
 anova(fit27weekly)
 plot(fit27weekly,pages=1, scale=-1, rug=F)
@@ -173,7 +173,7 @@ The global crisis effect is obvious also using the weekly salary.
 ```{r fit27hrwage, eval=T, include=T, echo=T, comment=NA, cache=F}
 x2=x[x$wscei>0 & x$jbhru>0,]
 x2$hrw = x2$wscei/x2$jbhru
-model27hrwage=(hrw ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab  + other_household)
+model27hrwage=(hrw ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct  + other_household)
 fit27hrwage = gam(model27hrwage, data=x2)
 anova(fit27hrwage)
 plot(fit27hrwage,pages=1, scale=-1, rug=F)
@@ -184,7 +184,7 @@ No effect of the global crisis on the hourly wage. This has nothing to do with t
 
 
 ```{r fit28, eval=T, include=T, echo=T, comment=NA, cache=F}
-model28=(wages_perc ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab + other_household)
+model28=(wages_perc ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + other_household)
 fit28 = gam(model28, data=x)
 anova(fit28)
 plot(fit28,pages=1, scale=-1, rug=F)
@@ -202,12 +202,10 @@ This result can be interpreted considering that the dependent variable is the sa
 
 ## fit27: random effects
 
-Skip.
-
-```{r fit27rnd, eval=F, include=F, echo=F, comment=NA, cache=F}
-load("~/Dropbox/Attachments/-.Migrations/data/fit27rnd.RData")
-#model27rnd=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
-#fit27rnd = gamm(model27, random=list(xwaveid=~1), data=x)
+```{r fit27rnd, eval=F, include=T, echo=T, comment=NA, cache=F}
+#load("~/Dropbox/Attachments/-.Migrations/data/fit27rnd.RData")
+model27rnd=(log(wsfei) ~ s(wave) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab)
+fit27rnd = gamm(model27, random=list(xwaveid=~1), data=x)
 anova(fit27rnd$gam)
 plot(fit27rnd$gam,pages=1, scale=-1, rug=F)
 ```
@@ -215,7 +213,7 @@ plot(fit27rnd$gam,pages=1, scale=-1, rug=F)
 
 ## fit27: wave stratified by age groups
 
-```{r fit27byAge, eval=T, include=T, echo=T, comment=NA, cache=F}
+```{r fit27byAge, eval=F, include=T, echo=T, comment=NA, cache=F}
 model27byAge=(log(wsfei) ~ s(wave, age_category, bs="fs",k=5) +  hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + other_household)
 fit = gam(model27byAge, data=x)
 snames=fit$smooth[[1]]$flev
@@ -229,7 +227,7 @@ The effect of the global crisis has been similar in all the 5 age groups.
 
 ## fit27: wave stratified by migration status (Australians vs English speaking migrants vs other migrants)
 
-```{r fit27byMigrationStatus, eval=T, include=T, echo=T, comment=NA, cache=F}
+```{r fit27byMigrationStatus, eval=F, include=T, echo=T, comment=NA, cache=F}
 model27byMigrationStatus=(log(wsfei) ~ s(wave, ancob3, bs="fs",k=5) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + other_household) # aneab cannot stay in the regression as few unique covariate combinations with wave_*
 fit = gam(model27byMigrationStatus, data=x)
 snames=fit$smooth[[1]]$flev
@@ -242,7 +240,7 @@ No differences in migration status.
 
 ## fit27: wave stratified by labour force status 
 
-```{r fit27byLabourForceStatus, eval=T, include=T, echo=T, comment=NA, cache=F}
+```{r fit27byLabourForceStatus, eval=F, include=T, echo=T, comment=NA, cache=F}
 model27byLabourForceStatus=(log(wsfei) ~ s(wave, esdtl, bs="fs",k=5)+ hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + other_household) 
 fit = gam(model27byLabourForceStatus, data=x)
 snames=fit$smooth[[1]]$flev
@@ -253,7 +251,7 @@ legend("bottomleft",snames,  lty=1:length(snames))
 
 ## fit27: wave stratified by employment status 
 
-```{r fit27byEmploymentStatus, eval=T, include=T, echo=T, comment=NA, cache=F}
+```{r fit27byEmploymentStatus, eval=F, include=T, echo=T, comment=NA, cache=F}
 model27byEmploymentStatus=(log(wsfei) ~ s(wave, esempst, bs="fs",k=5) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + other_household) 
 fit = gam(model27byEmploymentStatus, data=x)
 snames=fit$smooth[[1]]$flev
@@ -278,7 +276,7 @@ There is a weak effect: the higher the education level, the lighter the effect o
 
 ## fit27: wave stratified by skilled jobs (3 categories)
 
-```{r fit27bySkilledJobs, eval=T, include=T, echo=T, comment=NA, cache=F}
+```{r fit27bySkilledJobs, eval=F, include=T, echo=T, comment=NA, cache=F}
 model27bySkilledJobs=(log(wsfei) ~ s(wave, skill_category, bs="fs",k=5) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + other_household)
 fit = gam(model27bySkilledJobs, data=x)
 snames=fit$smooth[[1]]$flev
@@ -292,7 +290,7 @@ No differences in job skill categories.
 
 ## fit27: wave stratified by subject median salary (5 categories: 0<5000<50000<100000<200000+)
 
-```{r fit27bySalary, eval=T, include=T, echo=T, comment=NA, cache=F}
+```{r fit27bySalary, eval=F, include=T, echo=T, comment=NA, cache=F}
 model27bySalary=(log(wsfei) ~ s(x$wave, wage_category, bs="fs",k=5) + hgage + I(hgage^2) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + other_household)
 fit = gam(model27bySalary, data=x)
 snames=fit$smooth[[1]]$flev
@@ -308,8 +306,8 @@ legend("bottomleft",snames,  lty=1:length(snames))
 ## fit28: random effects
 
 ```{r fit28rnd, eval=F, include=T, echo=F, comment=NA}
-load("~/Dropbox/Attachments/-.Migrations/data/fit28rnd.RData")
-#fit28rnd = gamm(model28, random=list(xwaveid=~1), data=x)
+#load("~/Dropbox/Attachments/-.Migrations/data/fit28rnd.RData")
+fit28rnd = gamm(model28, random=list(xwaveid=~1), data=x)
 #summary(fit28rnd$lme)
 anova(fit28rnd$gam)
 plot(fit28rnd$gam,pages=1)
@@ -332,7 +330,7 @@ plot(fit28rnd$gam,pages=1)
 # Family
 
 ```{r family_wage, eval=T, include=T, echo=F, comment=NA}
-model30=(log(hifefp) ~ s(wave) + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr +  esdtl + hhstate + jbmwpsz + jbocct + aneab + other_household)
+model30=(log(hifefp) ~ s(wave) + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr +  esdtl + hhstate + jbmwpsz + jbocct + other_household)
 fit30 = gam(model30, data=x)
 anova(fit30)
 plot(fit30,pages=1, scale=-1, rug=F)
@@ -347,7 +345,7 @@ Let's consider the years since studying FT (ehtse). We now restrict the analysis
 ```{r fit31, eval=T, include=T, echo=F, comment=NA, cache=F}
 #x2: workers with info on years since last studying
 x2=x[x$ehtse>0 & (as.integer(x$esdtl)==11 | as.integer(x$esdtl)==12 | as.integer(x$esdtl)==17),]
-model31=(wages_perc ~ s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others) + sex + ancob3 + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab + other_household)
+model31=(wages_perc ~ s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others) + sex + ancob3 + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + other_household)
 fit31 = gam(model31, data=x2)
 anova(fit31)
 plot(fit31, rug=F ,pages=1)
@@ -356,7 +354,7 @@ plot(fit31, rug=F ,pages=1)
 Taking away ancob3 from the regression:
 
 ```{r fit32, eval=T, include=T, echo=F, comment=NA}
-model32=(wages_perc ~ s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others) + sex + edhigh1 + jbmo62 + edcoq + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + aneab + other_household)
+model32=(wages_perc ~ s(ehtse_au) + s(ehtse_anglo) + s(ehtse_others) + sex + edhigh1 + jbmo62 + edcoq3 + edqenr + fmfo61 + fmmo61 + esdtl + mrcurr + hhstate + jbmwpsz + jbocct + other_household)
 fit32 = gam(model32, data=x2)
 anova(fit32)
 plot(fit32, rug=F ,pages=1)
