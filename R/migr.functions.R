@@ -390,6 +390,21 @@ clean_data <- function(x){
   ##Only with age>=18 and <=65 and responding to questionnaire
   x=x[x$hgage>=18 & x$hgage<=65,]
   x=x[x$mrcurr!="[-10] Non-responding person",]
+  
+  #Cut upper- and lower-1% of people who ever-worked
+  wages=by(x, x$xwaveid, function(y){if (any(y$wsfei>1)) return(sum(y$wsfei))})
+  wages=sort(unlist(wages))
+  i1 = floor(0.02*length(wages))
+  i2 = floor(0.98*length(wages))
+  w1 = wages[i1]
+  w2 = wages[i2]
+  print(paste(w1,w2))
+  ids = by(x, x$xwaveid, function(y){if (sum(y$wsfei)>w1 & sum(y$wsfei)<w2) return(y$xwaveid[1])})
+  ids = as.factor(names(unlist(ids)))
+  print(ids[1:5])
+  indexes = which(x$xwaveid %in% ids)
+  x = x[indexes,]
+  x$xwaveid = droplevels(x$xwaveid)
   return(x)
 }
 

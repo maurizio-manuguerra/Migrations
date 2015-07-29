@@ -1,0 +1,1 @@
+library(devtools); devtools::load_all(); test(); graphics.off()
